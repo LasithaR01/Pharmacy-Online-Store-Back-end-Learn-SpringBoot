@@ -29,7 +29,7 @@ public class Product {
     private int batchNumber;
 
 
-
+// Add Attributes For Product Table
     public Long getId() {
         return id;
     }
