@@ -4,19 +4,26 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.sql.Date;
+import java.util.UUID;
 
-@Data
 @Entity
 @Table(name = "product")
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO) // Automatically generates UUIDs
+//    @Column(columnDefinition = "UUID") // Ensures the database treats it as a UUID
+    private UUID id;
 
-    private String name;
+    @Column(nullable = false) // Ensure 'name' is not null in the database
+    private String name; // This will store the original product name
 
-    private Long categoryId;
+    @Column(nullable = false, unique = true)
+    private String slug;
+
+    @ManyToOne(fetch = FetchType.LAZY) // Defines the relationship
+    @JoinColumn(name = "category_id", nullable = true) // Foreign key column
+    private Category category;
 
     private String description;
 
@@ -28,13 +35,21 @@ public class Product {
 
     private int batchNumber;
 
+    // Pre-persist and pre-update lifecycle hooks to generate slug from name
+    @PrePersist
+    @PreUpdate
+    public void generateSlug() {
+        if (name != null) {
+            // Convert the name to a URL-friendly slug
+            this.slug = name.toLowerCase().replaceAll("[^a-z0-9]+", "-").replaceAll("-$", "");
+        }
+    }
 
-// Add Attributes For Product Table
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -46,12 +61,20 @@ public class Product {
         this.name = name;
     }
 
-    public Long getCategoryId() {
-        return categoryId;
+    public String getSlug() {
+        return slug;
     }
 
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public String getDescription() {
