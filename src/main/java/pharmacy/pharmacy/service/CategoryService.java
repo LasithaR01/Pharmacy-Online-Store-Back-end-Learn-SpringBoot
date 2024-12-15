@@ -22,8 +22,13 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
 
+<<<<<<< Updated upstream
     // Fetch a product by ID
     public Optional<Category> getCategoryById(Long id) {
+=======
+    // Fetch a Category by ID
+    public static Optional<Category> getCategoryById(UUID id) {
+>>>>>>> Stashed changes
         return categoryRepository.findById(id);
     }
 
@@ -32,8 +37,41 @@ public class CategoryService {
         return categoryRepository.save(product);
     }
 
+<<<<<<< Updated upstream
     // Delete a product by ID
     public void deleteCategoryById(Long id) {
+=======
+    // Save or update a Category
+    public Category saveCategory(CategoryRequest category) {
+        try {
+            // Generate the slug
+            String slug = category.getName().toLowerCase().replaceAll("[^a-z0-9]+", "-")
+                    .replaceAll("-$", "");
+
+            // Set the slug on the product entity
+            category.setSlug(slug);
+
+            return categoryRepository.save(category);
+
+        } catch (DataIntegrityViolationException ex) {
+            // Handle database constraint violations
+            throw new RuntimeException("Database error while saving product: " + ex.getMessage(), ex);
+        } catch (NullPointerException ex) {
+            // Handle specific null pointer exception
+            throw new RuntimeException("Category or its name cannot be null", ex);
+        } catch (Exception ex) {
+            // Catch other unexpected exceptions
+            throw new RuntimeException("An unexpected error occurred while saving the product", ex);
+        }
+    }
+
+
+    // Delete a Category by ID
+    public void deleteCategoryById(UUID id) {
+>>>>>>> Stashed changes
         categoryRepository.deleteById(id);
+    }
+
+    public Category saveCategory(CategoryRequest categoryRequest) {
     }
 }
