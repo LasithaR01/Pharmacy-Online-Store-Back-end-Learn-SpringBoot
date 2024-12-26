@@ -1,5 +1,13 @@
 package pharmacy.pharmacy.service;
 
+<<<<<<< HEAD
+import org.springframework.stereotype.Service;
+import pharmacy.pharmacy.dao.CategoryRepository;
+import pharmacy.pharmacy.entity.Category;
+
+import java.util.List;
+import java.util.Optional;
+=======
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import pharmacy.pharmacy.dao.CategoryRepository;
@@ -9,6 +17,7 @@ import pharmacy.pharmacy.exception.ProductSaveException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+>>>>>>> main
 
 @Service
 public class CategoryService {
@@ -20,11 +29,29 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
+<<<<<<< HEAD
+    // Fetch all products
+=======
     // Fetch all Categories
+>>>>>>> main
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
 
+<<<<<<< HEAD
+    // Fetch a product by ID
+    public Optional<Category> getCategoryById(Long id) {
+        return categoryRepository.findById(id);
+    }
+
+    // Save or update a product
+    public Category saveProduct(Category product) {
+        return categoryRepository.save(product);
+    }
+
+    // Delete a product by ID
+    public void deleteCategoryById(Long id) {
+=======
     // Fetch a Category by ID
     public Optional<Category> getCategoryById(UUID id) {
         return categoryRepository.findById(id);
@@ -61,6 +88,7 @@ public class CategoryService {
 
     // Delete a Category by ID
     public void deleteCategoryById(UUID id) {
+>>>>>>> main
         categoryRepository.deleteById(id);
     }
 }
