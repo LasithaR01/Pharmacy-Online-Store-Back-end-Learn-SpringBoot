@@ -3,7 +3,7 @@ package pharmacy.pharmacy.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import pharmacy.pharmacy.dao.CategoryRepository;
+
 import pharmacy.pharmacy.dao.ProductRepository;
 import pharmacy.pharmacy.dto.ProductRequest;
 import pharmacy.pharmacy.entity.Category;
@@ -20,8 +20,7 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+
 
     // Fetch all products
     public List<Product> getAllProducts() {
@@ -38,34 +37,34 @@ public class ProductService {
     }
 
     // Save or update a product
-    public Product saveProduct(ProductRequest productRequest) {
-        Category category = categoryRepository.findById(productRequest.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found"));
-
-        try {
-            // Generate the slug
-            String slug = productRequest.getName().toLowerCase().replaceAll("[^a-z0-9]+", "-")
-                    .replaceAll("-$", "");
-
-            Product product = new Product();
-            product.setName(productRequest.getName());
-            product.setCategory(category);
-            product.setSlug(slug);
-            product.setDescription(productRequest.getDescription());
-
-            return productRepository.save(product);
-
-        } catch (DataIntegrityViolationException ex) {
-            // Handle database constraint violations
-            throw new ProductSaveException("Database error while saving product: " + ex.getMessage(), ex);
-        } catch (NullPointerException ex) {
-            // Handle specific null pointer exception
-            throw new ProductSaveException("Product or its name cannot be null", ex);
-        } catch (Exception ex) {
-            // Catch other unexpected exceptions
-            throw new ProductSaveException("An unexpected error occurred while saving the product", ex);
-        }
-    }
+//    public Product saveProduct(ProductRequest productRequest) {
+//        Category category = categoryRepository.findById(productRequest.getCategoryId())
+//                .orElseThrow(() -> new RuntimeException("Category not found"));
+//
+//        try {
+//            // Generate the slug
+//            String slug = productRequest.getName().toLowerCase().replaceAll("[^a-z0-9]+", "-")
+//                    .replaceAll("-$", "");
+//
+//            Product product = new Product();
+//            product.setName(productRequest.getName());
+//            product.setCategory(category);
+//            product.setSlug(slug);
+//            product.setDescription(productRequest.getDescription());
+//
+//            return productRepository.save(product);
+//
+//        } catch (DataIntegrityViolationException ex) {
+//            // Handle database constraint violations
+//            throw new ProductSaveException("Database error while saving product: " + ex.getMessage(), ex);
+//        } catch (NullPointerException ex) {
+//            // Handle specific null pointer exception
+//            throw new ProductSaveException("Product or its name cannot be null", ex);
+//        } catch (Exception ex) {
+//            // Catch other unexpected exceptions
+//            throw new ProductSaveException("An unexpected error occurred while saving the product", ex);
+//        }
+//    }
 
     // Delete a product by ID
     public void deleteProductById(UUID id) {
