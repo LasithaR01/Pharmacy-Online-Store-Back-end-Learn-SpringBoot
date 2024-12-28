@@ -28,8 +28,14 @@ public class CategoryController {
         return categoryService.getCategoryById(id);
     }
 
-    @GetMapping("/{slug}")
+    @GetMapping("/slug/{slug}")
     public Optional<Category> getCategoryBySlug(@PathVariable String slug) {
         return categoryService.getCategoryBySlug(slug);
+    }
+
+    //Delete a Category by Id
+    @DeleteMapping("/{id}")
+    public void deleteCategory(@PathVariable UUID id) {
+        categoryService.deleteCategoryById(id);
     }
 }

@@ -20,14 +20,17 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
-    //Get Category
+    //Get Category Id
     public Optional<Category> getCategoryById(UUID id) {
         return categoryRepository.findById(id);
     }
-
+    //Get Category Slug
     public Optional<Category> getCategoryBySlug(String slug) {
         return categoryRepository.findBySlug(slug);
     }
-
+    // Delete Category Id
+    public void deleteCategoryById(UUID id) {
+        categoryRepository.deleteById(id);
+    }
 
 }
