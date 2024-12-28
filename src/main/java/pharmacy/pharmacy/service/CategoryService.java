@@ -1,11 +1,13 @@
 package pharmacy.pharmacy.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import pharmacy.pharmacy.dao.CategoryRepository;
 import pharmacy.pharmacy.entity.Category;
 import pharmacy.pharmacy.entity.Product;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,20 +17,39 @@ public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    // Save or update a category
-    public Category saveCategory(Category category) {
-        return categoryRepository.save(category);
+     // Fetch all categories
+    public List<Category> getAllCategory() {
+        return categoryRepository.findAll();
     }
 
-    //Get Category Id
+    // Fetch a category by ID
     public Optional<Category> getCategoryById(UUID id) {
         return categoryRepository.findById(id);
     }
-    //Get Category Slug
+
+    // Fetch a category by slug
     public Optional<Category> getCategoryBySlug(String slug) {
         return categoryRepository.findBySlug(slug);
     }
-    // Delete Category Id
+
+    // Save or update a category
+    public Category saveCategory(Category category) {
+        try {
+            String slug = category.getName()
+                                  .toLowerCase()
+                                  .replaceAll("[^a-z0-9]+", "-")
+                                  .replaceAll("-$", "");
+            category.setSlug(slug);
+            return categoryRepository.save(category);
+
+        } catch (DataIntegrityViolationException ex) {
+            throw new RuntimeException("Category with this slug already exists.", ex);
+        } catch (NullPointerException ex) {
+            throw new RuntimeException("Category name cannot be null.", ex);
+        }
+    }
+
+    // Delete a category by ID
     public void deleteCategoryById(UUID id) {
         categoryRepository.deleteById(id);
     }

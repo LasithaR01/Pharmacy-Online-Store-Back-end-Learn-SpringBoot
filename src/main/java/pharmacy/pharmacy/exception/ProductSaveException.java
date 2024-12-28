@@ -6,6 +6,7 @@ public class ProductSaveException extends RuntimeException {
     }
 
     public ProductSaveException(String message, Throwable cause) {
+
         super(message, cause);
     }
 }
