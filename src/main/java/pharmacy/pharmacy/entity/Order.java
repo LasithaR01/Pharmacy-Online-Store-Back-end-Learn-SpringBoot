@@ -35,6 +35,9 @@ public class Order {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    private String status;
+
     // PrePersist lifecycle callback to set createdAt and generate slug
     @PrePersist
     public void prePersist() {
@@ -110,5 +113,13 @@ public class Order {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
