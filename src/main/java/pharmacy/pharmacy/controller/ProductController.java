@@ -15,6 +15,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/products")
 public class ProductController {
 
@@ -42,11 +43,11 @@ public class ProductController {
         return ResponseEntity.ok(product);
     }
 
-//    @PostMapping
-//    public ResponseEntity<Product> createProduct(@RequestBody ProductRequest productRequest) {
-//        Product createdProduct = productService.saveProduct(productRequest);
-//        return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
-//    }
+    @PostMapping
+    public ResponseEntity<Product> createProduct(@RequestBody ProductRequest productRequest) {
+        Product createdProduct = productService.saveProduct(productRequest);
+        return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
+    }
 
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable UUID id) {
