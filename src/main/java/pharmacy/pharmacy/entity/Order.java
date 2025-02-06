@@ -38,6 +38,9 @@ public class Order {
     @Column(nullable = false)
     private String status;
 
+//    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<OrderItem> orderItems;
+
     // PrePersist lifecycle callback to set createdAt and generate slug
     @PrePersist
     public void prePersist() {
@@ -122,4 +125,12 @@ public class Order {
     public void setStatus(String status) {
         this.status = status;
     }
+
+//    public List<OrderItem> getOrderItems() {
+//        return orderItems;
+//    }
+//
+//    public void setOrderItems(List<OrderItem> orderItems) {
+//        this.orderItems = orderItems;
+//    }
 }
