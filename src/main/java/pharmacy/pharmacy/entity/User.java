@@ -2,14 +2,15 @@ package pharmacy.pharmacy.entity;
 
 import jakarta.persistence.*;
 import java.sql.Timestamp;
+import java.util.UUID;
 
 @Entity
 @Table(name = "user")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-increment for ID
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.AUTO) // Auto-increment for ID
+    private UUID id;
 
     @Column(nullable = false)
     private String name;
@@ -40,11 +41,11 @@ public class User {
     }
 
     // Getter and Setter
-    public Integer getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

@@ -13,6 +13,7 @@ import pharmacy.pharmacy.exception.UserNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -26,7 +27,7 @@ public class UserService {
     }
 
     // Fetch a user by ID and return ResponseEntity
-    public ResponseEntity<User> getUserById(Integer id) {
+    public ResponseEntity<User> getUserById(UUID id) {
         Optional<User> user = userDAO.findById(id);
         return user.map(ResponseEntity::ok)
                    .orElseGet(() -> ResponseEntity.notFound().build());
@@ -64,7 +65,7 @@ public class UserService {
     }
 
     // Delete a user by ID
-    public void deleteUserById(Integer id) {
+    public void deleteUserById(UUID id) {
         User user = userDAO.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
         userDAO.delete(user);
     }
