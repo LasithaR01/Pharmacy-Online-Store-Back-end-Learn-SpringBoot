@@ -1,15 +1,13 @@
 package pharmacy.pharmacy.entity;
-import jakarta.persistence.*;
-import lombok.Data;
 
-import java.sql.Date;
+import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.util.UUID;
 
 @Entity
 @Table(name = "employee")
-
 public class Employee {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -17,36 +15,33 @@ public class Employee {
     @Column(nullable = false)
     private String name;
 
-    private String username;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role; // Enum for roles: Manager, Staff, etc.
 
-    @Column(nullable = false, unique = true)
-    private String slug;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "branch_id", nullable = true)
-  //  private Branch branch;
-    @Column(name = "user_role", nullable = false)
-    private  String role;
-
-    @Column(nullable = false, unique = true)
+    @Column(name = "contact_number")
     private String contactNumber;
 
-    private  double salary;
+    @Column(nullable = false)
+    private Double salary;
 
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Timestamp createdAt;
 
+//    @ManyToOne
+//    @JoinColumn(name = "branch_id", nullable = false)
+//    private Branch branch;
 
-
-    @PrePersist
-    @PreUpdate
-
-    public void generateUsername() {
-        if (name != null) {
-            // Convert the name to a slug-like username
-            this.username = name.toLowerCase().replaceAll("[^a-z0-9]+", "-").replaceAll("-$", "");
-        }
+    // Enum for role values
+    public enum Role {
+        Manager, Staff, Pharmacist
     }
 
+    // Constructor
+    public Employee() {
+    }
+
+    // Getters and Setters
     public UUID getId() {
         return id;
     }
@@ -63,27 +58,11 @@ public class Employee {
         this.name = name;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getSlug() {
-        return slug;
-    }
-
-    public void setSlug(String slug) {
-        this.slug = slug;
-    }
-
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
@@ -95,11 +74,11 @@ public class Employee {
         this.contactNumber = contactNumber;
     }
 
-    public double getSalary() {
+    public Double getSalary() {
         return salary;
     }
 
-    public void setSalary(double salary) {
+    public void setSalary(Double salary) {
         this.salary = salary;
     }
 
@@ -109,5 +88,19 @@ public class Employee {
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+
+//    public Branch getBranch() {
+//        return branch;
+//    }
+
+//    public void setBranch(Branch branch) {
+//        this.branch = branch;
+//    }
+
+    // PrePersist to initialize createdAt before saving to database
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 }
