@@ -3,6 +3,7 @@ package pharmacy.pharmacy.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pharmacy.pharmacy.entity.Category;
 import pharmacy.pharmacy.service.CategoryService;
@@ -12,7 +13,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/category")
+@CrossOrigin
+@RequestMapping("/api/categories")
 public class CategoryController {
 
     @Autowired
