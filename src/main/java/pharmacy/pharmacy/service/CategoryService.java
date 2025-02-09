@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import pharmacy.pharmacy.dao.CategoryRepository;
+import pharmacy.pharmacy.dto.CategoryDTO;
 import pharmacy.pharmacy.entity.Category;
-import pharmacy.pharmacy.entity.Product;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +17,7 @@ public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-     // Fetch all categories
+    // Fetch all categories
     public List<Category> getAllCategory() {
         return categoryRepository.findAll();
     }
@@ -36,9 +36,9 @@ public class CategoryService {
     public Category saveCategory(Category category) {
         try {
             String slug = category.getName()
-                                  .toLowerCase()
-                                  .replaceAll("[^a-z0-9]+", "-")
-                                  .replaceAll("-$", "");
+                    .toLowerCase()
+                    .replaceAll("[^a-z0-9]+", "-")
+                    .replaceAll("-$", "");
             category.setSlug(slug);
             return categoryRepository.save(category);
 
@@ -47,6 +47,27 @@ public class CategoryService {
         } catch (NullPointerException ex) {
             throw new RuntimeException("Category name cannot be null.", ex);
         }
+    }
+
+    public Category saveOrUpdateCategory(CategoryDTO categoryDTO) {
+
+        boolean isNewCategory = (categoryDTO.getId() == null);
+        Category category;
+
+        if (!isNewCategory) {
+            category = categoryRepository.findById(categoryDTO.getId())
+                    .orElseThrow(() -> new RuntimeException("Category not found"));
+        } else {
+            category = new Category();
+        }
+
+        category.setName(categoryDTO.getName());
+        category.setSlug(categoryDTO.getName().toLowerCase().replaceAll("[^a-z0-9]+", "-")
+                .replaceAll("-$", ""));
+        category.setDescription(categoryDTO.getDescription());
+
+        category = categoryRepository.save(category);
+        return category;
     }
 
     // Delete a category by ID

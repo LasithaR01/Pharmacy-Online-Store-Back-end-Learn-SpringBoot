@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import pharmacy.pharmacy.dao.RoleRepository;
 import pharmacy.pharmacy.dao.UserRepository;
+import pharmacy.pharmacy.dto.AuthRegisterResponseDto;
 import pharmacy.pharmacy.dto.AuthResponseDto;
 import pharmacy.pharmacy.dto.LoginDto;
 import pharmacy.pharmacy.dto.RegisterDto;
@@ -71,7 +72,7 @@ public class AuthController {
         user.setRoles(roles);
         userRepository.save(user);
 
-        return ResponseEntity.ok("User registered successfully!");
+        return ResponseEntity.ok(new AuthRegisterResponseDto(user));
     }
 
 }
