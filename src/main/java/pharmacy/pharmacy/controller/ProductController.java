@@ -5,8 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pharmacy.pharmacy.dto.ProductDTO;
-import pharmacy.pharmacy.dto.ProductRequest;
-import pharmacy.pharmacy.entity.Category;
+import pharmacy.pharmacy.dto.ProductSaveUpdateDTO;
 import pharmacy.pharmacy.entity.Product;
 import pharmacy.pharmacy.exception.ProductNotFoundException;
 import pharmacy.pharmacy.service.ProductService;
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/products")
+@RequestMapping("/api/products")
 public class ProductController {
 
     @Autowired
@@ -43,10 +42,16 @@ public class ProductController {
         return productService.getProductBySlug(slug);
     }
 
-    @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody ProductRequest productRequest) {
-        Product createdProduct = productService.saveProduct(productRequest);
-        return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
+//    @PostMapping
+//    public ResponseEntity<Product> createProduct(@RequestBody ProductRequest productRequest) {
+//        Product createdProduct = productService.saveProduct(productRequest);
+//        return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
+//    }
+
+    @RequestMapping(headers = "Accept=application/json", method = RequestMethod.POST)
+    public ResponseEntity<Product> saveOrUpdate(@RequestBody ProductSaveUpdateDTO productDTO) {
+        Product product = productService.saveOrUpdateProduct(productDTO);
+        return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
