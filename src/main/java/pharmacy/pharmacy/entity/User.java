@@ -1,60 +1,48 @@
 package pharmacy.pharmacy.entity;
 
 import jakarta.persistence.*;
-import java.sql.Timestamp;
-import java.util.UUID;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
+@Data
+@NoArgsConstructor
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO) // Auto-increment for ID
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-    @Column(nullable = false)
-    private String name;
+    private String username;
 
-    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING) // For storing Enum as a String
-    private Role role; // Enum for roles: Admin, Pharmacist, Customer
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 
-    @Column(name = "contact_number")
-    private String contactNumber;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Timestamp createdAt;
-
-    // Enum for role values
-    public enum Role {
-        Admin, Pharmacist, Customer
-    }
-
-    // Constructor
-    public User() {
-    }
-
-    // Getter and Setter
-    public UUID getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getEmail() {
@@ -73,33 +61,11 @@ public class User {
         this.password = password;
     }
 
-    public Role getRole() {
-        return role;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public String getContactNumber() {
-        return contactNumber;
-    }
-
-    public void setContactNumber(String contactNumber) {
-        this.contactNumber = contactNumber;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    // PrePersist to initialize createdAt before saving to database
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = new Timestamp(System.currentTimeMillis());
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 }

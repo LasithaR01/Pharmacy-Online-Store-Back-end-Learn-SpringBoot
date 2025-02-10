@@ -6,11 +6,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pharmacy.pharmacy.dto.ProductDTO;
 import pharmacy.pharmacy.dto.ProductRequest;
+import pharmacy.pharmacy.entity.Category;
 import pharmacy.pharmacy.entity.Product;
 import pharmacy.pharmacy.exception.ProductNotFoundException;
 import pharmacy.pharmacy.service.ProductService;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -37,10 +39,8 @@ public class ProductController {
     }
 
     @GetMapping("/slug/{slug}")
-    public ResponseEntity<Product> getProductBySlug(@PathVariable String slug) {
-        Product product = productService.getProductBySlug(slug)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found with slug: " + slug));
-        return ResponseEntity.ok(product);
+    public Optional<Product> getProductBySlug(@PathVariable String slug) {
+        return productService.getProductBySlug(slug);
     }
 
     @PostMapping
