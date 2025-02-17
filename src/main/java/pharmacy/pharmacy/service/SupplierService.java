@@ -1,19 +1,19 @@
 package pharmacy.pharmacy.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pharmacy.pharmacy.dto.SupplierRequest;
 import pharmacy.pharmacy.dto.SupplierResponse;
 import pharmacy.pharmacy.entity.Supplier;
-import pharmacy.pharmacy.exception.SupplierNotFoundException;
-import pharmacy.pharmacy.exception.SupplierAlreadyExistsException;
 import pharmacy.pharmacy.dao.SupplierRepository;
+import pharmacy.pharmacy.exception.SupplierNotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class SupplierService {
 
     private final SupplierRepository supplierRepository;
@@ -22,66 +22,60 @@ public class SupplierService {
         this.supplierRepository = supplierRepository;
     }
 
-    // Convert Supplier Entity to Response DTO
-    private SupplierResponse convertToDto(Supplier supplier) {
-        return new SupplierResponse(
-                supplier.getId(),
-                supplier.getName(),
-                supplier.getContactNumber(),
-                supplier.getAddress(),
-                supplier.getCreatedAt()
-        );
-    }
-
-    // Create Supplier
-    public SupplierResponse createSupplier(SupplierRequest requestDto) {
-        // Check if supplier already exists by name (you can change this check as needed)
-        if (supplierRepository.existsByName(requestDto.getName())) {
-            throw new SupplierAlreadyExistsException("Supplier with name '" + requestDto.getName() + "' already exists.");
-        }
-
-        Supplier supplier = new Supplier(
-                requestDto.getName(),
-                requestDto.getContactNumber(),
-                requestDto.getAddress(),
-                new java.util.Date()
-        );
+    // Create a new supplier
+    public SupplierResponse createSupplier(SupplierRequest request) {
+        Supplier supplier = new Supplier();
+        supplier.setName(request.getName());
+        supplier.setContactNumber(request.getContactNumber());
+        supplier.setAddress(request.getAddress());
 
         Supplier savedSupplier = supplierRepository.save(supplier);
-        return convertToDto(savedSupplier);
+        return mapToResponse(savedSupplier);
     }
 
     // Get all suppliers
     public List<SupplierResponse> getAllSuppliers() {
-        List<Supplier> suppliers = supplierRepository.findAll();
-        return suppliers.stream().map(this::convertToDto).collect(Collectors.toList());
+        return supplierRepository.findAll().stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
     // Get supplier by ID
     public SupplierResponse getSupplierById(UUID id) {
         Supplier supplier = supplierRepository.findById(id)
-                .orElseThrow(() -> new SupplierNotFoundException("Supplier with ID " + id + " not found."));
-        return convertToDto(supplier);
+                .orElseThrow(() -> new SupplierNotFoundException("Supplier not found with ID: " + id));
+
+        return mapToResponse(supplier);
     }
 
-    // Update supplier
-    public SupplierResponse updateSupplier(UUID id, SupplierRequest requestDto) {
+    // Update an existing supplier
+    public SupplierResponse updateSupplier(UUID id, SupplierRequest request) {
         Supplier supplier = supplierRepository.findById(id)
-                .orElseThrow(() -> new SupplierNotFoundException("Supplier with ID " + id + " not found."));
+                .orElseThrow(() -> new SupplierNotFoundException("Supplier not found with ID: " + id));
 
-        supplier.setName(requestDto.getName());
-        supplier.setContactNumber(requestDto.getContactNumber());
-        supplier.setAddress(requestDto.getAddress());
+        supplier.setName(request.getName());
+        supplier.setContactNumber(request.getContactNumber());
+        supplier.setAddress(request.getAddress());
 
         Supplier updatedSupplier = supplierRepository.save(supplier);
-        return convertToDto(updatedSupplier);
+        return mapToResponse(updatedSupplier);
     }
 
-    // Delete supplier
+    // Delete supplier by ID
     public void deleteSupplier(UUID id) {
         if (!supplierRepository.existsById(id)) {
-            throw new SupplierNotFoundException("Supplier with ID " + id + " not found.");
+            throw new SupplierNotFoundException("Supplier not found with ID: " + id);
         }
         supplierRepository.deleteById(id);
+    }
+
+    // Helper method to map Supplier entity to SupplierResponse DTO
+    private SupplierResponse mapToResponse(Supplier supplier) {
+        return new SupplierResponse(
+                supplier.getId(),
+                supplier.getName(),
+                supplier.getContactNumber(),
+                supplier.getAddress()
+        );
     }
 }

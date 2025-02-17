@@ -1,20 +1,22 @@
 package pharmacy.pharmacy.dto;
 
 //import jakarta.validation.constraints.NotBlank;
+//import jakarta.validation.constraints.Pattern;
 //import jakarta.validation.constraints.Size;
+import java.io.Serializable;
 
-public class SupplierRequest {
+public class SupplierRequest implements Serializable {
 
-//    @NotBlank(message = "Supplier name is required")
-//    @Size(max = 100, message = "Name cannot exceed 100 characters")
+//    @NotBlank(message = "Name cannot be empty")
+//    @Size(max = 100, message = "Name must be at most 100 characters")
     private String name;
 
-//    @NotBlank(message = "Contact number is required")
-//    @Size(max = 15, message = "Contact number cannot exceed 15 characters")
+//    @NotBlank(message = "Contact number cannot be empty")
+//    @Pattern(regexp = "\\d{10,15}", message = "Contact number must be between 10-15 digits")
     private String contactNumber;
 
-//    @NotBlank(message = "Address is required")
-//    @Size(max = 255, message = "Address cannot exceed 255 characters")
+//    @NotBlank(message = "Address cannot be empty")
+//    @Size(max = 255, message = "Address must be at most 255 characters")
     private String address;
 
     // Constructors
@@ -27,27 +29,12 @@ public class SupplierRequest {
     }
 
     // Getters and Setters
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public String getContactNumber() { return contactNumber; }
+    public void setContactNumber(String contactNumber) { this.contactNumber = contactNumber; }
 
-    public String getContactNumber() {
-        return contactNumber;
-    }
-
-    public void setContactNumber(String contactNumber) {
-        this.contactNumber = contactNumber;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
 }

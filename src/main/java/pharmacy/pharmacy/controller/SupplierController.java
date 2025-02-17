@@ -2,11 +2,11 @@ package pharmacy.pharmacy.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pharmacy.pharmacy.entity.Supplier;
+import pharmacy.pharmacy.dto.SupplierRequest;
+import pharmacy.pharmacy.dto.SupplierResponse;
 import pharmacy.pharmacy.service.SupplierService;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -21,35 +21,30 @@ public class SupplierController {
 
     // Create a new supplier
     @PostMapping
-    public ResponseEntity<Supplier> createSupplier(@RequestBody Supplier supplier) {
-        Supplier newSupplier = supplierService.createSupplier(supplier);
-        return ResponseEntity.ok(newSupplier);
+    public ResponseEntity<SupplierResponse> createSupplier(@RequestBody SupplierRequest request) {
+        SupplierResponse response = supplierService.createSupplier(request);
+        return ResponseEntity.ok(response);
     }
 
     // Get all suppliers
     @GetMapping
-    public ResponseEntity<List<Supplier>> getAllSuppliers() {
-        List<Supplier> suppliers = supplierService.getAllSuppliers();
+    public ResponseEntity<List<SupplierResponse>> getAllSuppliers() {
+        List<SupplierResponse> suppliers = supplierService.getAllSuppliers();
         return ResponseEntity.ok(suppliers);
     }
 
     // Get supplier by ID
     @GetMapping("/{id}")
-    public ResponseEntity<Supplier> getSupplierById(@PathVariable UUID id) {
-        Optional<Supplier> supplier = supplierService.getSupplierById(id);
-        return supplier.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<SupplierResponse> getSupplierById(@PathVariable UUID id) {
+        SupplierResponse response = supplierService.getSupplierById(id);
+        return ResponseEntity.ok(response);
     }
 
     // Update an existing supplier
     @PutMapping("/{id}")
-    public ResponseEntity<Supplier> updateSupplier(@PathVariable UUID id, @RequestBody Supplier updatedSupplier) {
-        try {
-            Supplier supplier = supplierService.updateSupplier(id, updatedSupplier);
-            return ResponseEntity.ok(supplier);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<SupplierResponse> updateSupplier(@PathVariable UUID id, @RequestBody SupplierRequest request) {
+        SupplierResponse response = supplierService.updateSupplier(id, request);
+        return ResponseEntity.ok(response);
     }
 
     // Delete a supplier by ID
