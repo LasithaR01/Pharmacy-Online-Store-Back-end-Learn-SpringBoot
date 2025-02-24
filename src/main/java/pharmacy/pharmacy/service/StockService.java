@@ -56,7 +56,7 @@ public class StockService {
 //        );
 //    }
 
-    // Add new stock 
+    // Add new stock
     public Stock addStock(UUID productId, UUID supplierId, int quantityAdded) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
