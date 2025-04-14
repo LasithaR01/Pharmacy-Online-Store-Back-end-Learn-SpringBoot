@@ -70,10 +70,10 @@ public class ProductService {
 
     public Product saveOrUpdateProduct(ProductSaveUpdateDTO productDTO) {
 
-        boolean isNewCategory = (productDTO.getId() == null);
+        boolean isNewProduct = (productDTO.getId() == null);
         Product product;
 
-        if (!isNewCategory) {
+        if (!isNewProduct) {
             product = productRepository.findById(productDTO.getId())
                     .orElseThrow(() -> new RuntimeException("Product not found"));
         } else {
