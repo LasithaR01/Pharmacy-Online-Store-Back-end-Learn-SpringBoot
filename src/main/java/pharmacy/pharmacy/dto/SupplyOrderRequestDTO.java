@@ -10,4 +10,8 @@ public class SupplyOrderRequestDTO {
     private UUID branchId;
     private Date orderDate;
     private String status;
+
+    public Date getOrderDate() {
+        return null;
+    }
 }

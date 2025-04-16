@@ -11,4 +11,14 @@ public class SupplyOrderResponseDTO {
     private String branchName;
     private Date orderDate;
     private String status;
+
+    public void setId(UUID id) {
+    }
+
+    public void setSupplierName(String name) {
+            
+    }
+
+    public void setOrderDate(Date orderDate) {
+    }
 }
