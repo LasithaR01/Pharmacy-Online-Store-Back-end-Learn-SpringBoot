@@ -3,10 +3,10 @@ package pharmacy.pharmacy.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-
 import pharmacy.pharmacy.dao.CategoryRepository;
 import pharmacy.pharmacy.dao.ProductRepository;
 import pharmacy.pharmacy.dto.ProductRequest;
+import pharmacy.pharmacy.dto.ProductSaveUpdateDTO;
 import pharmacy.pharmacy.entity.Category;
 import pharmacy.pharmacy.entity.Product;
 import pharmacy.pharmacy.exception.ProductSaveException;
@@ -66,6 +66,39 @@ public class ProductService {
             // Catch other unexpected exceptions
             throw new ProductSaveException("An unexpected error occurred while saving the product", ex);
         }
+    }
+
+    public Product saveOrUpdateProduct(ProductSaveUpdateDTO productDTO) {
+
+        boolean isNewProduct = (productDTO.getId() == null);
+        Product product;
+
+        if (!isNewProduct) {
+            product = productRepository.findById(productDTO.getId())
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+        } else {
+            product = new Product();
+        }
+
+        product.setName(productDTO.getName());
+        product.setSlug(productDTO.getName().toLowerCase().replaceAll("[^a-z0-9]+", "-")
+                .replaceAll("-$", ""));
+        product.setDescription(productDTO.getDescription());
+        product.setPrice(productDTO.getPrice());
+        product.setStockQuantity(productDTO.getStockQuantity());
+        product.setExpiryDate(productDTO.getExpiryDate());
+
+        // **Assign the category**
+        if (productDTO.getCategoryId() != null) {
+            Category category = categoryRepository.findById(productDTO.getCategoryId())
+                    .orElseThrow(() -> new RuntimeException("Category not found"));
+            product.setCategory(category);
+        } else {
+            product.setCategory(null); // Allow null if category is optional
+        }
+
+        product = productRepository.save(product);
+        return product;
     }
 
     // Delete a product by ID

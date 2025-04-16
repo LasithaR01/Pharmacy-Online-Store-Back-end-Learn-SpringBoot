@@ -1,20 +1,23 @@
 package pharmacy.pharmacy.exception;
 
+import java.time.LocalDateTime;
+
 public class ErrorResponse {
     private int status;
     private String error;
     private String message;
     private String path;
+    private LocalDateTime timestamp;
 
-    // Constructor, getters and setters
     public ErrorResponse(int status, String error, String message, String path) {
         this.status = status;
         this.error = error;
         this.message = message;
         this.path = path;
+        this.timestamp = LocalDateTime.now();
     }
 
-    // Getters and Setters
+    // Getters & Setters
     public int getStatus() {
         return status;
     }
@@ -45,5 +48,9 @@ public class ErrorResponse {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
     }
 }

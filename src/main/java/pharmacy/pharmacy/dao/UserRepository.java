@@ -4,9 +4,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import pharmacy.pharmacy.entity.User;
 
-import java.util.UUID;
+import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, UUID> {
-    User findByEmail(String email); // Custom query to find user by email
+public interface UserRepository extends JpaRepository<User, Integer> {
+
+    Optional<User> findByUsername(String username);
+
+    Boolean existsByUsername(String username);
 }

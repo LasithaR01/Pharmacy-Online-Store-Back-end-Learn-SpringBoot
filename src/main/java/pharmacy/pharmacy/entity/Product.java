@@ -35,6 +35,9 @@ public class Product {
 
     private int batchNumber;
 
+//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<OrderItem> orderItems;
+
     // Pre-persist and pre-update lifecycle hooks to generate slug from name
     @PrePersist
     @PreUpdate
@@ -116,4 +119,12 @@ public class Product {
     public void setBatchNumber(int batchNumber) {
         this.batchNumber = batchNumber;
     }
+
+//    public List<OrderItem> getOrderItems() {
+//        return orderItems;
+//    }
+//
+//    public void setOrderItems(List<OrderItem> orderItems) {
+//        this.orderItems = orderItems;
+//    }
 }
