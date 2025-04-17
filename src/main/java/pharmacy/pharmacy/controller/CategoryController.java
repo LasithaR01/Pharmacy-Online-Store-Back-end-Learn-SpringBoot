@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+
+@CrossOrigin
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController {
@@ -38,13 +40,12 @@ public class CategoryController {
     public Optional<Category> getCategoryBySlug(@PathVariable String slug) {
         return categoryService.getCategoryBySlug(slug);
     }
-
     // Create a new category
-//    @PostMapping
-//    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
-//        Category saveCategory = categoryService.saveCategory(category);
-//        return new ResponseEntity<>(saveCategory, HttpStatus.CREATED);
-//    }
+    @PostMapping("/create")
+    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
+        Category saveCategory = categoryService.saveCategory(category);
+        return new ResponseEntity<>(saveCategory, HttpStatus.CREATED);
+    }
 
     // Update an existing category
 //    @PutMapping("/{id}")
