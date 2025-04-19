@@ -28,24 +28,24 @@ public class CategoryController {
         return ResponseEntity.ok(category);
     }
 
-    //
-//    // Get a category by Id
-//    @GetMapping("/{id}")
-//    public Optional<Category> getCategoryById(@PathVariable UUID id) {
-//        return categoryService.getCategoryById(id);
-//    }
-//
+
+ // Get a category by Id
+    @GetMapping("/{id}")
+    public Optional<Category> getCategoryById(@PathVariable UUID id) {
+        return categoryService.getCategoryById(id);
+    }
+
 //    // Get a category by Slug
-    @GetMapping("/slug/{slug}")
-    public Optional<Category> getCategoryBySlug(@PathVariable String slug) {
-        return categoryService.getCategoryBySlug(slug);
-    }
-    // Create a new category
-    @PostMapping("/create")
-    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
-        Category saveCategory = categoryService.saveCategory(category);
-        return new ResponseEntity<>(saveCategory, HttpStatus.CREATED);
-    }
+//    @GetMapping("/slug/{slug}")
+//    public Optional<Category> getCategoryBySlug(@PathVariable String slug) {
+//        return categoryService.getCategoryBySlug(slug);
+//    }
+//    // Create a new category
+//    @PostMapping("/create")
+//    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
+//        Category saveCategory = categoryService.saveCategory(category);
+//        return new ResponseEntity<>(saveCategory, HttpStatus.CREATED);
+//    }
 
     // Update an existing category
 //    @PutMapping("/{id}")
