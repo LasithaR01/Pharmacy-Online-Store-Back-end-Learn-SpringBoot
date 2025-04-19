@@ -36,16 +36,17 @@ public class CategoryController {
     }
 
 //    // Get a category by Slug
-//    @GetMapping("/slug/{slug}")
-//    public Optional<Category> getCategoryBySlug(@PathVariable String slug) {
-//        return categoryService.getCategoryBySlug(slug);
-//    }
-//    // Create a new category
-//    @PostMapping("/create")
-//    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
-//        Category saveCategory = categoryService.saveCategory(category);
-//        return new ResponseEntity<>(saveCategory, HttpStatus.CREATED);
-//    }
+    @GetMapping("/slug/{slug}")
+    public Optional<Category> getCategoryBySlug(@PathVariable String slug) {
+        return categoryService.getCategoryBySlug(slug);
+    }
+    // Create a new category
+
+    @PostMapping("/create")
+    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
+        Category saveCategory = categoryService.saveCategory(category);
+        return new ResponseEntity<>(saveCategory, HttpStatus.CREATED);
+    }
 
     // Update an existing category
 //    @PutMapping("/{id}")

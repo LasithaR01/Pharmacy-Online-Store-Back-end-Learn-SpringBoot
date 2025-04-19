@@ -50,7 +50,6 @@ public class CategoryService {
     }
 
     public Category saveOrUpdateCategory(CategoryDTO categoryDTO) {
-
         boolean isNewCategory = (categoryDTO.getId() == null);
         Category category;
 
@@ -61,18 +60,14 @@ public class CategoryService {
             category = new Category();
         }
 
+
         category.setName(categoryDTO.getName());
-        category.setSlug(categoryDTO.getName().toLowerCase().replaceAll("[^a-z0-9]+", "-")
-                .replaceAll("-$", ""));
+        category.setSlug(categoryDTO.getSlug());
         category.setDescription(categoryDTO.getDescription());
 
-        category = categoryRepository.save(category);
-        return category;
+        return categoryRepository.save(category);
     }
-
-    // Delete a category by ID
     public void deleteCategoryById(UUID id) {
-        categoryRepository.deleteById(id);
-    }
 
+    }
 }

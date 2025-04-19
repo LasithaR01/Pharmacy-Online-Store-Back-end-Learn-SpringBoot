@@ -10,6 +10,8 @@ public class CategoryDTO {
 
     private String name;
 
+    private String slug;
+
     private String description;
 
     public UUID getId() {
@@ -26,6 +28,14 @@ public class CategoryDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
     }
 
     public String getDescription() {
