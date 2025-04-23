@@ -28,6 +28,7 @@ public class ProductController {
         return products.stream()
                 .map(ProductDTO::new)
                 .collect(Collectors.toList());
+
     }
 
     @GetMapping("/{id}")
@@ -43,7 +44,7 @@ public class ProductController {
         return ResponseEntity.ok(product);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<Product> createProduct(@RequestBody ProductRequest productRequest) {
         Product createdProduct = productService.saveProduct(productRequest);
         return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);

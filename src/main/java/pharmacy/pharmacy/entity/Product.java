@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -29,11 +30,19 @@ public class Product {
 
     private double price;
 
+    private double costPrice;
+
     private int stockQuantity;
 
     private Date expiryDate;
 
     private int batchNumber;
+
+    private int barcode;
+
+    private String isPrescriptionRequired;
+
+    private LocalDateTime createdAt;
 
     // Pre-persist and pre-update lifecycle hooks to generate slug from name
     @PrePersist
@@ -115,5 +124,37 @@ public class Product {
 
     public void setBatchNumber(int batchNumber) {
         this.batchNumber = batchNumber;
+    }
+
+    public int getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(int barcode) {
+        this.barcode = barcode;
+    }
+
+    public String getIsPrescriptionRequired() {
+        return isPrescriptionRequired;
+    }
+
+    public void setIsPrescriptionRequired(String isPrescriptionRequired) {
+        this.isPrescriptionRequired = isPrescriptionRequired;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public double getCostPrice() {
+        return costPrice;
+    }
+
+    public void setCostPrice(double costPrice) {
+        this.costPrice = costPrice;
     }
 }
