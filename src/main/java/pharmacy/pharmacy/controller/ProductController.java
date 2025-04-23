@@ -5,19 +5,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pharmacy.pharmacy.dto.ProductDTO;
-import pharmacy.pharmacy.dto.ProductSaveUpdateDTO;
+import pharmacy.pharmacy.dto.ProductRequest;
 import pharmacy.pharmacy.entity.Product;
 import pharmacy.pharmacy.exception.ProductNotFoundException;
 import pharmacy.pharmacy.service.ProductService;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/api/products")
+@RequestMapping("/products")
 public class ProductController {
 
     @Autowired
@@ -29,6 +28,7 @@ public class ProductController {
         return products.stream()
                 .map(ProductDTO::new)
                 .collect(Collectors.toList());
+
     }
 
     @GetMapping("/{id}")
@@ -38,20 +38,16 @@ public class ProductController {
     }
 
     @GetMapping("/slug/{slug}")
-    public Optional<Product> getProductBySlug(@PathVariable String slug) {
-        return productService.getProductBySlug(slug);
+    public ResponseEntity<Product> getProductBySlug(@PathVariable String slug) {
+        Product product = productService.getProductBySlug(slug)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found with slug: " + slug));
+        return ResponseEntity.ok(product);
     }
 
-//    @PostMapping
-//    public ResponseEntity<Product> createProduct(@RequestBody ProductRequest productRequest) {
-//        Product createdProduct = productService.saveProduct(productRequest);
-//        return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
-//    }
-
-    @RequestMapping(headers = "Accept=application/json", method = RequestMethod.POST)
-    public ResponseEntity<Product> saveOrUpdate(@RequestBody ProductSaveUpdateDTO productDTO) {
-        Product product = productService.saveOrUpdateProduct(productDTO);
-        return new ResponseEntity<>(product, HttpStatus.OK);
+    @PostMapping("/create")
+    public ResponseEntity<Product> createProduct(@RequestBody ProductRequest productRequest) {
+        Product createdProduct = productService.saveProduct(productRequest);
+        return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
