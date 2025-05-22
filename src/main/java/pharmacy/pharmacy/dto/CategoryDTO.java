@@ -1,35 +1,18 @@
-package pharmacy.pharmacy.entity;
-import jakarta.persistence.*;
-import lombok.Data;
+package pharmacy.pharmacy.dto;
 
-import java.util.UUID;  
+import pharmacy.pharmacy.entity.Category;
 
-@Entity
-@Table(name = "category")
-public class Category {
+import java.util.UUID;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+public class CategoryDTO {
+
     private UUID id;
 
-    @Column(name = "name")
     private String name;
 
-    @Column(name = "slug")
     private String slug;
 
-    @Column(name = "description")
     private String description;
-
-    public Category(UUID id, String name, String slug, String description) {
-        this.id = id;
-        this.name = name;
-        this.slug = slug;
-        this.description = description;
-    }
-
-    public Category() {
-    }
 
     public UUID getId() {
         return id;

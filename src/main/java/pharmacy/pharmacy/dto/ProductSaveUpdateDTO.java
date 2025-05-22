@@ -1,21 +1,31 @@
 package pharmacy.pharmacy.dto;
 
-import lombok.Data;
-
-import java.util.Date;
+import java.sql.Date;
 import java.util.UUID;
 
-public class ProductRequest {
+public class ProductSaveUpdateDTO {
+
+    private UUID id;
+
     private String name;
+
     private UUID categoryId;
+
     private String description;
+
     private double price;
-    private double costPrice;
+
     private int stockQuantity;
+
     private Date expiryDate;
-    private int batchNumber;
-    private int barcode;
-    private String isPrescriptionRequired;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -49,14 +59,6 @@ public class ProductRequest {
         this.price = price;
     }
 
-    public double getCostPrice() {
-        return costPrice;
-    }
-
-    public void setCostPrice(double costPrice) {
-        this.costPrice = costPrice;
-    }
-
     public int getStockQuantity() {
         return stockQuantity;
     }
@@ -73,27 +75,4 @@ public class ProductRequest {
         this.expiryDate = expiryDate;
     }
 
-    public int getBatchNumber() {
-        return batchNumber;
-    }
-
-    public void setBatchNumber(int batchNumber) {
-        this.batchNumber = batchNumber;
-    }
-
-    public int getBarcode() {
-        return barcode;
-    }
-
-    public void setBarcode(int barcode) {
-        this.barcode = barcode;
-    }
-
-    public String getIsPrescriptionRequired() {
-        return isPrescriptionRequired;
-    }
-
-    public void setIsPrescriptionRequired(String isPrescriptionRequired) {
-        this.isPrescriptionRequired = isPrescriptionRequired;
-    }
 }

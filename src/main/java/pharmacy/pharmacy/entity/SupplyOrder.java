@@ -8,22 +8,28 @@ import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "`order`")
-public class Order {
+@Table(name = "supply_order")
+public class SupplyOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(nullable = false)
-    private UUID userId;
+    @ManyToOne
+    @JoinColumn(name = "supplier_id", nullable = false)
+    private Supplier supplier;
+
+//    @ManyToOne
+//    @JoinColumn(name = "branch_id", nullable = false)
+//    private Branch branch;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     private Date orderDate;
 
-    @Column(nullable = false)
-    private int totalAmount;
+//    @Enumerated(EnumType.STRING)
+//    @Column(nullable = false)
+//    private OrderStatus status;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, updatable = false)
@@ -31,15 +37,6 @@ public class Order {
 
     @Column(nullable = true, unique = true)
     private String slug;
-
-    @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
-    private String status;
-
-//    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    private List<OrderItem> orderItems;
 
     // PrePersist lifecycle callback to set createdAt and generate slug
     @PrePersist
@@ -54,10 +51,11 @@ public class Order {
         generateSlug();
     }
 
-    // Method to generate slug from name
+    // Method to generate slug from supplier name and order date
     private void generateSlug() {
-        if (name != null) {
-            this.slug = name.toLowerCase().replaceAll("[^a-z0-9]+", "-").replaceAll("-$", "");
+        if (supplier != null && orderDate != null) {
+            this.slug = supplier.getName().toLowerCase().replaceAll("[^a-z0-9]+", "-").replaceAll("-$", "")
+                    + "-" + orderDate.getTime();
         }
     }
 
@@ -70,13 +68,21 @@ public class Order {
         this.id = id;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public Supplier getSupplier() {
+        return supplier;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
     }
+
+//    public Branch getBranch() {
+//        return branch;
+//    }
+//
+//    public void setBranch(Branch branch) {
+//        this.branch = branch;
+//    }
 
     public Date getOrderDate() {
         return orderDate;
@@ -86,13 +92,13 @@ public class Order {
         this.orderDate = orderDate;
     }
 
-    public int getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(int totalAmount) {
-        this.totalAmount = totalAmount;
-    }
+//    public OrderStatus getStatus() {
+//        return status;
+//    }
+//
+//    public void setStatus(OrderStatus status) {
+//        this.status = status;
+//    }
 
     public Date getCreatedAt() {
         return createdAt;
@@ -109,28 +115,4 @@ public class Order {
     public void setSlug(String slug) {
         this.slug = slug;
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-//    public List<OrderItem> getOrderItems() {
-//        return orderItems;
-//    }
-//
-//    public void setOrderItems(List<OrderItem> orderItems) {
-//        this.orderItems = orderItems;
-//    }
 }
