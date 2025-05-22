@@ -1,76 +1,151 @@
 package pharmacy.pharmacy.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.sentry.Sentry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pharmacy.pharmacy.dto.CategoryDTO;
 import pharmacy.pharmacy.entity.Category;
+import pharmacy.pharmacy.exception.CategoryNotFoundException;
+import pharmacy.pharmacy.exception.DuplicateCategoryException;
 import pharmacy.pharmacy.service.CategoryService;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
-
-@CrossOrigin
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/categories")
+@Tag(name = "Category Management", description = "Endpoints for managing product categories")
 public class CategoryController {
 
-    @Autowired
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
-    // Get all categories
+    @Autowired
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
+
+    @Operation(summary = "Get all categories", description = "Returns a list of all product categories")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved list",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = Category.class)))
     @GetMapping
     public ResponseEntity<List<Category>> getAllCategories() {
-        List<Category> category = categoryService.getAllCategory();
-        return ResponseEntity.ok(category);
+        try {
+            List<Category> categories = categoryService.getAllCategories();
+            return ResponseEntity.ok(categories);
+        } catch (Exception e) {
+            Sentry.captureException(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
-
- // Get a category by Id
+    @Operation(summary = "Get category by ID", description = "Returns a single category by its ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved category",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Category.class))),
+            @ApiResponse(responseCode = "404", description = "Category not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid ID supplied")
+    })
     @GetMapping("/{id}")
-    public Optional<Category> getCategoryById(@PathVariable UUID id) {
-        return categoryService.getCategoryById(id);
+    public ResponseEntity<Category> getCategoryById(
+            @Parameter(description = "ID of category to be retrieved", required = true)
+            @PathVariable UUID id) {
+        try {
+            Category category = categoryService.getCategoryById(id);
+            return ResponseEntity.ok(category);
+        } catch (CategoryNotFoundException e) {
+            Sentry.captureException(e);
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            Sentry.captureException(e);
+            return ResponseEntity.badRequest().build();
+        }
     }
 
-//    // Get a category by Slug
-    @GetMapping("/slug/{slug}")
-    public Optional<Category> getCategoryBySlug(@PathVariable String slug) {
-        return categoryService.getCategoryBySlug(slug);
-    }
-    // Create a new category
-
-    @PostMapping("/create")
-    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
-        Category saveCategory = categoryService.saveCategory(category);
-        return new ResponseEntity<>(saveCategory, HttpStatus.CREATED);
-    }
-
-    // Update an existing category
-//    @PutMapping("/{id}")
-//    public ResponseEntity<Category> updateCategory(@PathVariable UUID id, @RequestBody Category updatedCategory) {
-//        Optional<Category> existingCategory = categoryService.getCategoryById(id);
-//        if (existingCategory.isPresent()) {
-//            updatedCategory.setName(updatedCategory.getName());
-//            updatedCategory.setDescription(updatedCategory.getDescription());
-//            Category savedCategory = categoryService.saveCategory(updatedCategory);
-//            return ResponseEntity.ok(savedCategory);
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
-
-    @RequestMapping(headers = "Accept=application/json", method = RequestMethod.POST)
-    public ResponseEntity<Category> saveOrUpdate(@RequestBody CategoryDTO categoryDTO) {
-        Category category = categoryService.saveOrUpdateCategory(categoryDTO);
-        return new ResponseEntity<>(category, HttpStatus.OK);
+    @Operation(summary = "Create new category", description = "Creates a new product category")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Category created successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Category.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "409", description = "Category with this name already exists")
+    })
+    @PostMapping
+    public ResponseEntity<Category> createCategory(
+            @Parameter(description = "Category object to be created", required = true,
+                    content = @Content(schema = @Schema(implementation = Category.class)))
+            @RequestBody Category category) {
+        try {
+            Category createdCategory = categoryService.saveCategory(category);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdCategory);
+        } catch (DuplicateCategoryException e) {
+            Sentry.captureException(e);
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        } catch (Exception e) {
+            Sentry.captureException(e);
+            return ResponseEntity.badRequest().build();
+        }
     }
 
-    //Delete a category by Id
+    @Operation(summary = "Update or create category", description = "Updates existing category or creates new if ID is not provided")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Category updated/created successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Category.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "404", description = "Category not found (when updating)"),
+            @ApiResponse(responseCode = "409", description = "Category with this name already exists")
+    })
+    @PutMapping
+    public ResponseEntity<Category> saveOrUpdateCategory(
+            @Parameter(description = "Category DTO containing category data", required = true,
+                    content = @Content(schema = @Schema(implementation = CategoryDTO.class)))
+            @RequestBody CategoryDTO categoryDTO) {
+        try {
+            Category category = categoryService.saveOrUpdateCategory(categoryDTO);
+            return ResponseEntity.ok(category);
+        } catch (CategoryNotFoundException e) {
+            Sentry.captureException(e);
+            return ResponseEntity.notFound().build();
+        } catch (DuplicateCategoryException e) {
+            Sentry.captureException(e);
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        } catch (Exception e) {
+            Sentry.captureException(e);
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @Operation(summary = "Delete category", description = "Deletes a category by its ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Category deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Category not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid ID supplied")
+    })
     @DeleteMapping("/{id}")
-    public void deleteCategory(@PathVariable UUID id) {
-        categoryService.deleteCategoryById(id);
+    public ResponseEntity<Void> deleteCategory(
+            @Parameter(description = "ID of category to be deleted", required = true)
+            @PathVariable UUID id) {
+        try {
+            categoryService.deleteCategoryById(id);
+            return ResponseEntity.noContent().build();
+        } catch (CategoryNotFoundException e) {
+            Sentry.captureException(e);
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            Sentry.captureException(e);
+            return ResponseEntity.badRequest().build();
+        }
     }
 }
