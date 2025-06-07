@@ -28,7 +28,9 @@ import pharmacy.pharmacy.entity.User;
 import pharmacy.pharmacy.security.JwtUtils;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
@@ -72,12 +74,13 @@ public class AuthController {
         return ResponseEntity.ok(new AuthResponseDto(jwt));
     }
 
-    @Operation(summary = "Register new user", description = "Registers a new user with USER role")
+    @Operation(summary = "Register new user", description = "Registers a new user with selected roles (defaults to ROLE_CUSTOMER if none provided)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Registration successful",
                     content = @Content(schema = @Schema(implementation = AuthRegisterResponseDto.class))),
-            @ApiResponse(responseCode = "400", description = "Bad request - username already taken")
+            @ApiResponse(responseCode = "400", description = "Bad request - username/email already taken or invalid role")
     })
+
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(
             @Parameter(description = "User registration details", required = true)
@@ -87,14 +90,34 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Error: Username is already taken!");
         }
 
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+            return ResponseEntity.badRequest().body("Error: Email is already in use!");
+        }
+
         User user = new User();
         user.setUsername(signUpRequest.getUsername());
         user.setPassword(encoder.encode(signUpRequest.getPassword()));
+        user.setEmail(signUpRequest.getEmail());
 
         Set<UserRole> roles = new HashSet<>();
-        UserRole userRole = roleRepository.findByName(ERole.ROLE_USER)
-                .orElseThrow(() -> new RuntimeException("Error: UserRole is not found."));
-        roles.add(userRole);
+
+        if (signUpRequest.getRoles() == null || signUpRequest.getRoles().isEmpty()) {
+            // Default role if none specified
+            UserRole customerRole = roleRepository.findByName(ERole.ROLE_CUSTOMER)
+                    .orElseThrow(() -> new RuntimeException("Error: Customer role not found."));
+            roles.add(customerRole);
+        } else {
+            // Process requested roles
+            roles = signUpRequest.getRoles().stream()
+                    .map(role -> roleRepository.findByName(ERole.valueOf(role)))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toSet());
+
+            if (roles.isEmpty()) {
+                return ResponseEntity.badRequest().body("Error: None of the specified roles are valid!");
+            }
+        }
 
         user.setRoles(roles);
         userRepository.save(user);
