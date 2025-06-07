@@ -57,7 +57,7 @@ public class SecurityConfig {
                                 "/webjars/**"
                         ).permitAll()
 
-                        // Role-based endpoints (now handled with @PreAuthorize)
+                        // UserRole-based endpoints (now handled with @PreAuthorize)
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

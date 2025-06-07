@@ -1,24 +1,23 @@
 package pharmacy.pharmacy.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "roles")
-public class Role {
-
+@Data
+@NoArgsConstructor
+public class UserRole {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
     private ERole name;
 
-    public ERole getName() {
-        return name;
-    }
-
-    public void setName(ERole name) {
+    public UserRole(ERole name) {
         this.name = name;
     }
 }

@@ -45,7 +45,7 @@
 //            user.setName(userDTO.getName());
 //            user.setEmail(userDTO.getEmail());
 //            user.setContactNumber(userDTO.getContactNumber());
-//            user.setRole(User.Role.valueOf(userDTO.getRole()));
+//            user.setRole(User.UserRole.valueOf(userDTO.getRole()));
 //
 //            return userDAO.save(user);
 //
