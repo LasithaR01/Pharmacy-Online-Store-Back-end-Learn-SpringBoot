@@ -18,10 +18,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import pharmacy.pharmacy.dao.UserRoleRepository;
 import pharmacy.pharmacy.dao.UserRepository;
-import pharmacy.pharmacy.dto.AuthRegisterResponseDto;
-import pharmacy.pharmacy.dto.AuthResponseDto;
-import pharmacy.pharmacy.dto.LoginDto;
-import pharmacy.pharmacy.dto.RegisterDto;
+import pharmacy.pharmacy.dto.AuthRegisterResponseDTO;
+import pharmacy.pharmacy.dto.AuthResponseDTO;
+import pharmacy.pharmacy.dto.LoginDTO;
+import pharmacy.pharmacy.dto.RegisterDTO;
 import pharmacy.pharmacy.entity.ERole;
 import pharmacy.pharmacy.entity.UserRole;
 import pharmacy.pharmacy.entity.User;
@@ -56,14 +56,14 @@ public class AuthController {
     @Operation(summary = "Authenticate user", description = "Authenticates user credentials and returns JWT token")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Authentication successful",
-                    content = @Content(schema = @Schema(implementation = AuthResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = AuthResponseDTO.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized - invalid credentials"),
             @ApiResponse(responseCode = "400", description = "Bad request - invalid input")
     })
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(
             @Parameter(description = "Login credentials", required = true)
-            @RequestBody LoginDto loginRequest) {
+            @RequestBody LoginDTO loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
@@ -71,20 +71,20 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken((UserDetails) authentication.getPrincipal());
 
-        return ResponseEntity.ok(new AuthResponseDto(jwt));
+        return ResponseEntity.ok(new AuthResponseDTO(jwt));
     }
 
     @Operation(summary = "Register new user", description = "Registers a new user with selected roles (defaults to ROLE_CUSTOMER if none provided)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Registration successful",
-                    content = @Content(schema = @Schema(implementation = AuthRegisterResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = AuthRegisterResponseDTO.class))),
             @ApiResponse(responseCode = "400", description = "Bad request - username/email already taken or invalid role")
     })
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(
             @Parameter(description = "User registration details", required = true)
-            @RequestBody RegisterDto signUpRequest) {
+            @RequestBody RegisterDTO signUpRequest) {
 
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity.badRequest().body("Error: Username is already taken!");
@@ -122,6 +122,6 @@ public class AuthController {
         user.setRoles(roles);
         userRepository.save(user);
 
-        return ResponseEntity.ok(new AuthRegisterResponseDto(user));
+        return ResponseEntity.ok(new AuthRegisterResponseDTO(user));
     }
 }
