@@ -2,7 +2,7 @@ package pharmacy.pharmacy.dto;
 
 import pharmacy.pharmacy.entity.User;
 
-public class AuthRegisterResponseDto {
+public class AuthRegisterResponseDTO {
 
     private int id;
 
@@ -12,7 +12,7 @@ public class AuthRegisterResponseDto {
 
     private String password;
 
-    public AuthRegisterResponseDto(User user) {
+    public AuthRegisterResponseDTO(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
     }
