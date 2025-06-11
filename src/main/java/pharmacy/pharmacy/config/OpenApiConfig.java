@@ -21,12 +21,12 @@ public class OpenApiConfig {
 
         // Define tags in the order you want them to appear
         List<Tag> tags = Arrays.asList(
-            new Tag().name("Authentication").extensions(java.util.Map.of("x-order", 5)),
-            new Tag().name("User Management").extensions(java.util.Map.of("x-order", 3)),
-            new Tag().name("Branch Management").extensions(java.util.Map.of("x-order", 2)),
+            new Tag().name("Authentication").extensions(java.util.Map.of("x-order", 1)),
+            new Tag().name("User Management").extensions(java.util.Map.of("x-order", 2)),
+            new Tag().name("Branch Management").extensions(java.util.Map.of("x-order", 3)),
             new Tag().name("Product Management").extensions(java.util.Map.of("x-order", 4)),
-            new Tag().name("Category Management").extensions(java.util.Map.of("x-order", 1)),
-            new Tag().name("Inventory Management").extensions(java.util.Map.of("x-order", 0))
+            new Tag().name("Category Management").extensions(java.util.Map.of("x-order", 5)),
+            new Tag().name("Inventory Management").extensions(java.util.Map.of("x-order", 6))
         );
 
         return new OpenAPI()
