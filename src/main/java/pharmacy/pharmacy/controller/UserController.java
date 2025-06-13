@@ -145,7 +145,7 @@ public class UserController {
             @Parameter(description = "ID of the user") @PathVariable int userId,
             @Parameter(description = "Role to be assigned") @RequestBody UserRole role) {
         try {
-            return ResponseEntity.ok(userService.assignRoleToUser(userId, role));
+            return ResponseEntity.ok(userService.assignRoleToUser(userId, role.getId()));
         } catch (Exception e) {
             Sentry.captureException(e);
             throw new GlobalException("Error assigning role to user with id: " + userId, e);
