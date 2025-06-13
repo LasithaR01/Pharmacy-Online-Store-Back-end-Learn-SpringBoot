@@ -37,13 +37,13 @@ public class Branch {
     // Relationships
 //    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private Set<Employee> employees = new HashSet<>();
-//
+
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Inventory> inventories = new HashSet<>();
-//
-//    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private Set<Stock> stockEntries = new HashSet<>();
-//
+
+    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Stock> stockEntries = new HashSet<>();
+
 //    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private Set<Orders> orders = new HashSet<>();
 //
