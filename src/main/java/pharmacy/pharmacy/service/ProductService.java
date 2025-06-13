@@ -98,4 +98,8 @@ public class ProductService {
     public List<Product> getLowStockProductsByBranch(Integer branchId) {
         return productRepository.findLowStockProductsByBranch(branchId, 10);
     }
+
+    public Product getProductEntityById(Integer productId) {
+        return null;
+    }
 }
