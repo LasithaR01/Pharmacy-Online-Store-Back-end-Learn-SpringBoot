@@ -26,7 +26,9 @@ public class OpenApiConfig {
             new Tag().name("Branch Management").extensions(java.util.Map.of("x-order", 3)),
             new Tag().name("Product Management").extensions(java.util.Map.of("x-order", 4)),
             new Tag().name("Category Management").extensions(java.util.Map.of("x-order", 5)),
-            new Tag().name("Inventory Management").extensions(java.util.Map.of("x-order", 6))
+            new Tag().name("Inventory Management").extensions(java.util.Map.of("x-order", 6)),
+                new Tag().name("Supplier Management").extensions(java.util.Map.of("x-order", 7)),
+                new Tag().name("Stock Management").extensions(java.util.Map.of("x-order", 8))
         );
 
         return new OpenAPI()
