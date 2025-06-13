@@ -1,13 +1,7 @@
 package pharmacy.pharmacy.mapper;
 
-import pharmacy.pharmacy.dto.BranchDTO;
-import pharmacy.pharmacy.dto.CategoryDTO;
-import pharmacy.pharmacy.dto.InventoryDTO;
-import pharmacy.pharmacy.dto.ProductDTO;
-import pharmacy.pharmacy.entity.Branch;
-import pharmacy.pharmacy.entity.Category;
-import pharmacy.pharmacy.entity.Inventory;
-import pharmacy.pharmacy.entity.Product;
+import pharmacy.pharmacy.dto.*;
+import pharmacy.pharmacy.entity.*;
 
 public class EntityDtoMapper {
 
@@ -164,4 +158,115 @@ public class EntityDtoMapper {
         }
     }
 
+
+
+//     Stock Mapper
+    public static StockDTO convertToStockDTO(Stock stock) {
+        if (stock == null) {
+            return null;
+        }
+
+        StockDTO dto = new StockDTO();
+        dto.setId(stock.getId());
+
+        if (stock.getProduct() != null) {
+            dto.setProductId(stock.getProduct().getId());
+        }
+
+        if (stock.getSupplier() != null) {
+            dto.setSupplierId(stock.getSupplier().getId());
+        }
+
+        dto.setQuantityAdded(stock.getQuantityAdded());
+        dto.setUnitCost(stock.getUnitCost());
+        dto.setDateAdded(stock.getDateAdded());
+        dto.setExpiryDate(stock.getExpiryDate());
+        dto.setBatchNumber(stock.getBatchNumber());
+
+        if (stock.getBranch() != null) {
+            dto.setBranchId(stock.getBranch().getId());
+        }
+
+        if (stock.getApprovedBy() != null) {
+            dto.setApprovedById(stock.getApprovedBy().getId());
+        }
+
+        return dto;
+    }
+
+    public static Stock convertToStock(StockDTO dto, Product product, Supplier supplier,
+                                     Branch branch, User approvedBy) {
+        if (dto == null) {
+            return null;
+        }
+
+        Stock stock = new Stock();
+        stock.setId(dto.getId());
+        stock.setProduct(product);
+//        stock.setSupplier(supplier);
+        stock.setQuantityAdded(dto.getQuantityAdded());
+        stock.setUnitCost(dto.getUnitCost());
+        stock.setExpiryDate(dto.getExpiryDate());
+        stock.setBatchNumber(dto.getBatchNumber());
+        stock.setBranch(branch);
+        stock.setApprovedBy(approvedBy);
+
+        return stock;
+    }
+
+    public static void updateStockFromDTO(StockDTO dto, Stock entity) {
+        if (dto == null || entity == null) {
+            return;
+        }
+
+        if (dto.getQuantityAdded() != null) {
+            entity.setQuantityAdded(dto.getQuantityAdded());
+        }
+        if (dto.getUnitCost() != null) {
+            entity.setUnitCost(dto.getUnitCost());
+        }
+        if (dto.getExpiryDate() != null) {
+            entity.setExpiryDate(dto.getExpiryDate());
+        }
+        if (dto.getBatchNumber() != null) {
+            entity.setBatchNumber(dto.getBatchNumber());
+        }
+    }
+
+        // Supplier Mapper
+        public static SupplierDTO convertToSupplierDTO(Supplier supplier) {
+            if (supplier == null) return null;
+
+            SupplierDTO dto = new SupplierDTO();
+            dto.setId(supplier.getId());
+
+            if (supplier.getUser() != null) {
+                dto.setUserId(supplier.getUser().getId());
+            }
+
+            dto.setCompanyName(supplier.getCompanyName());
+            dto.setAddress(supplier.getAddress());
+            dto.setTaxId(supplier.getTaxId());
+            dto.setCreatedAt(supplier.getCreatedAt());
+
+            // Additional calculated fields
+            if (supplier.getStockEntries() != null) {
+                dto.setTotalStockItems(supplier.getStockEntries().size());
+            }
+
+            return dto;
+        }
+
+        public static Supplier convertToSupplier(SupplierDTO dto, User user) {
+            if (dto == null) return null;
+
+            Supplier supplier = new Supplier();
+            supplier.setId(dto.getId());
+            supplier.setUser(user);
+            supplier.setCompanyName(dto.getCompanyName());
+            supplier.setAddress(dto.getAddress());
+            supplier.setTaxId(dto.getTaxId());
+
+            return supplier;
+        }
 }
