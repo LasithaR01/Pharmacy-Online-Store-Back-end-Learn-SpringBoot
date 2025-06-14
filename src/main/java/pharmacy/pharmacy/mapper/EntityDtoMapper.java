@@ -2,6 +2,13 @@ package pharmacy.pharmacy.mapper;
 
 import pharmacy.pharmacy.dto.*;
 import pharmacy.pharmacy.entity.*;
+import pharmacy.pharmacy.enums.OrderStatus;
+import pharmacy.pharmacy.enums.PaymentMethod;
+import pharmacy.pharmacy.enums.PaymentStatus;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class EntityDtoMapper {
 
@@ -269,4 +276,156 @@ public class EntityDtoMapper {
 
             return supplier;
         }
+
+        // Order Mapper
+    public static OrderDTO convertToOrderDTO(Order order) {
+        if (order == null) {
+            return null;
+        }
+
+        OrderDTO dto = new OrderDTO();
+        dto.setId(order.getId());
+
+        if (order.getUser() != null) {
+            dto.setUserId(order.getUser().getId());
+            dto.setUserName(order.getUser().getFullName());
+        }
+
+        if (order.getBranch() != null) {
+            dto.setBranchId(order.getBranch().getId());
+            dto.setBranchName(order.getBranch().getName());
+        }
+
+        dto.setOrderDate(order.getOrderDate());
+        dto.setTotalAmount(order.getTotalAmount());
+        dto.setDiscountAmount(order.getDiscountAmount());
+        dto.setTaxAmount(order.getTaxAmount());
+        dto.setStatus(order.getStatus());
+        dto.setPaymentMethod(order.getPaymentMethod());
+        dto.setPaymentStatus(order.getPaymentStatus());
+        dto.setNotes(order.getNotes());
+
+        if (order.getProcessedBy() != null) {
+            dto.setProcessedById(order.getProcessedBy().getId());
+            dto.setProcessedByName(order.getProcessedBy().getFullName());
+        }
+
+        if (order.getOrderItems() != null) {
+            List<OrderItemDTO> itemDTOs = order.getOrderItems().stream()
+                .map(EntityDtoMapper::convertToOrderItemDTO)
+                .collect(Collectors.toList());
+            dto.setOrderItems(itemDTOs);
+        }
+
+        return dto;
+    }
+
+    public static Order convertToOrder(OrderDTO dto, User user, Branch branch, User processedBy) {
+        if (dto == null) {
+            return null;
+        }
+
+        Order order = new Order();
+        order.setId(dto.getId());
+        order.setUser(user);
+        order.setBranch(branch);
+        order.setOrderDate(dto.getOrderDate());
+        order.setTotalAmount(dto.getTotalAmount());
+        order.setDiscountAmount(dto.getDiscountAmount());
+        order.setTaxAmount(dto.getTaxAmount());
+        order.setStatus(dto.getStatus() != null ? dto.getStatus() : OrderStatus.CART);
+        order.setPaymentMethod(dto.getPaymentMethod());
+        order.setPaymentStatus(dto.getPaymentStatus() != null ? dto.getPaymentStatus() : PaymentStatus.PENDING);
+        order.setNotes(dto.getNotes());
+        order.setProcessedBy(processedBy);
+
+        return order;
+    }
+
+    // OrderItem Mapper
+    public static OrderItemDTO convertToOrderItemDTO(OrderItem orderItem) {
+        if (orderItem == null) {
+            return null;
+        }
+
+        OrderItemDTO dto = new OrderItemDTO();
+        dto.setId(orderItem.getId());
+
+        if (orderItem.getOrder() != null) {
+            dto.setOrderId(orderItem.getOrder().getId());
+        }
+
+        if (orderItem.getProduct() != null) {
+            dto.setProductId(orderItem.getProduct().getId());
+            dto.setProductName(orderItem.getProduct().getName());
+            dto.setProductBarcode(orderItem.getProduct().getBarcode());
+        }
+
+        dto.setQuantity(orderItem.getQuantity());
+        dto.setPrice(orderItem.getPrice());
+        dto.setDiscountAmount(orderItem.getDiscountAmount());
+        dto.setTotalPrice(orderItem.getPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity()))
+                                  .subtract(orderItem.getDiscountAmount() != null ?
+                                           orderItem.getDiscountAmount() : BigDecimal.ZERO));
+
+        return dto;
+    }
+
+    public static OrderItem convertToOrderItem(OrderItemDTO dto, Order order, Product product) {
+        if (dto == null) {
+            return null;
+        }
+
+        OrderItem orderItem = new OrderItem();
+        orderItem.setId(dto.getId());
+        orderItem.setOrder(order);
+        orderItem.setProduct(product);
+        orderItem.setQuantity(dto.getQuantity());
+        orderItem.setPrice(dto.getPrice());
+        orderItem.setDiscountAmount(dto.getDiscountAmount());
+
+        return orderItem;
+    }
+
+    // For PATCH operations where only certain fields are updated
+    public static void updateOrderFromDTO(OrderDTO dto, Order entity) {
+        if (dto == null || entity == null) {
+            return;
+        }
+
+        if (dto.getStatus() != null) {
+            entity.setStatus(dto.getStatus());
+        }
+        if (dto.getPaymentMethod() != null) {
+            entity.setPaymentMethod(dto.getPaymentMethod());
+        }
+        if (dto.getPaymentStatus() != null) {
+            entity.setPaymentStatus(dto.getPaymentStatus());
+        }
+        if (dto.getNotes() != null) {
+            entity.setNotes(dto.getNotes());
+        }
+        if (dto.getDiscountAmount() != null) {
+            entity.setDiscountAmount(dto.getDiscountAmount());
+        }
+        if (dto.getTaxAmount() != null) {
+            entity.setTaxAmount(dto.getTaxAmount());
+        }
+    }
+
+    public static void updateOrderItemFromDTO(OrderItemDTO dto, OrderItem entity) {
+        if (dto == null || entity == null) {
+            return;
+        }
+
+        if (dto.getQuantity() != null) {
+            entity.setQuantity(dto.getQuantity());
+        }
+        if (dto.getPrice() != null) {
+            entity.setPrice(dto.getPrice());
+        }
+        if (dto.getDiscountAmount() != null) {
+            entity.setDiscountAmount(dto.getDiscountAmount());
+        }
+    }
 }
