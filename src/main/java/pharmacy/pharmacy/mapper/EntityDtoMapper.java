@@ -5,6 +5,7 @@ import pharmacy.pharmacy.entity.*;
 import pharmacy.pharmacy.enums.OrderStatus;
 import pharmacy.pharmacy.enums.PaymentMethod;
 import pharmacy.pharmacy.enums.PaymentStatus;
+import pharmacy.pharmacy.enums.PrescriptionStatus;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -428,4 +429,56 @@ public class EntityDtoMapper {
             entity.setDiscountAmount(dto.getDiscountAmount());
         }
     }
+
+    // Prescription Mapper
+public static PrescriptionDTO convertToPrescriptionDTO(Prescription prescription) {
+    if (prescription == null) {
+        return null;
+    }
+
+    PrescriptionDTO dto = new PrescriptionDTO();
+    dto.setId(prescription.getId());
+
+    if (prescription.getUser() != null) {
+        dto.setUserId(prescription.getUser().getId());
+        dto.setUserName(prescription.getUser().getName());
+    }
+
+    dto.setDoctorName(prescription.getDoctorName());
+    dto.setDoctorContact(prescription.getDoctorContact());
+    dto.setPrescriptionDate(prescription.getPrescriptionDate());
+    dto.setStatus(prescription.getStatus());
+    dto.setNotes(prescription.getNotes());
+    dto.setDocumentUrl(prescription.getDocumentUrl());
+
+    if (prescription.getApprovedBy() != null) {
+        dto.setApprovedById(prescription.getApprovedBy().getId());
+        dto.setApprovedByName(prescription.getApprovedBy().getName());
+    }
+
+    dto.setCreatedAt(prescription.getCreatedAt());
+    dto.setApprovedAt(prescription.getApprovedAt());
+
+    return dto;
+}
+
+public static Prescription convertToPrescription(PrescriptionDTO dto, User user, User approvedBy) {
+    if (dto == null) {
+        return null;
+    }
+
+    Prescription prescription = new Prescription();
+    prescription.setId(dto.getId());
+    prescription.setUser(user);
+    prescription.setDoctorName(dto.getDoctorName());
+    prescription.setDoctorContact(dto.getDoctorContact());
+    prescription.setPrescriptionDate(dto.getPrescriptionDate());
+    prescription.setStatus(dto.getStatus() != null ? dto.getStatus() : PrescriptionStatus.PENDING);
+    prescription.setNotes(dto.getNotes());
+    prescription.setDocumentUrl(dto.getDocumentUrl());
+    prescription.setApprovedBy(approvedBy);
+    prescription.setApprovedAt(dto.getApprovedAt());
+
+    return prescription;
+}
 }
