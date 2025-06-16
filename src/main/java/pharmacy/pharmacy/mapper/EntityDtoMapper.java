@@ -668,4 +668,65 @@ public class EntityDtoMapper {
                     .approvedAt(dto.getApprovedAt())
                     .build();
         }
+
+                // ProductAlternative Mapper
+        public static ProductAlternativeDTO convertToProductAlternativeDTO(ProductAlternative alternative) {
+            if (alternative == null) {
+                return null;
+            }
+
+            ProductAlternativeDTO dto = new ProductAlternativeDTO();
+            dto.setId(alternative.getId());
+
+            if (alternative.getProduct() != null) {
+                dto.setProductId(alternative.getProduct().getId());
+                dto.setProductName(alternative.getProduct().getName());
+                if (alternative.getProduct().getCategory() != null) {
+                    dto.setProductCategory(alternative.getProduct().getCategory().getName());
+                }
+            }
+
+            if (alternative.getAlternativeProduct() != null) {
+                dto.setAlternativeProductId(alternative.getAlternativeProduct().getId());
+                dto.setAlternativeProductName(alternative.getAlternativeProduct().getName());
+                if (alternative.getAlternativeProduct().getCategory() != null) {
+                    dto.setAlternativeProductCategory(alternative.getAlternativeProduct().getCategory().getName());
+                }
+            }
+
+            dto.setReason(alternative.getReason());
+            dto.setCreatedAt(alternative.getCreatedAt());
+
+            // Calculate business logic flags
+            dto.setSameCategory(alternative.isSameCategory());
+            dto.setCheaperAlternative(alternative.isCheaperAlternative());
+            dto.setInStock(alternative.isInStock());
+
+            return dto;
+        }
+
+        public static ProductAlternative convertToProductAlternative(ProductAlternativeDTO dto,
+                                                                   Product product,
+                                                                   Product alternativeProduct) {
+            if (dto == null) {
+                return null;
+            }
+
+            return ProductAlternative.builder()
+                    .id(dto.getId())
+                    .product(product)
+                    .alternativeProduct(alternativeProduct)
+                    .reason(dto.getReason())
+                    .build();
+        }
+
+        public static void updateProductAlternativeFromDTO(ProductAlternativeDTO dto, ProductAlternative entity) {
+            if (dto == null || entity == null) {
+                return;
+            }
+
+            if (dto.getReason() != null) {
+                entity.setReason(dto.getReason());
+            }
+        }
 }
