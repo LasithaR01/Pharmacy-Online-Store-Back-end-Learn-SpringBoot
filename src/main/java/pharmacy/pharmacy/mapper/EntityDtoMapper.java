@@ -2,10 +2,7 @@ package pharmacy.pharmacy.mapper;
 
 import pharmacy.pharmacy.dto.*;
 import pharmacy.pharmacy.entity.*;
-import pharmacy.pharmacy.enums.OrderStatus;
-import pharmacy.pharmacy.enums.PaymentMethod;
-import pharmacy.pharmacy.enums.PaymentStatus;
-import pharmacy.pharmacy.enums.PrescriptionStatus;
+import pharmacy.pharmacy.enums.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -537,6 +534,69 @@ public class EntityDtoMapper {
                 .isRead(dto.isRead())
                 .notificationType(dto.getNotificationType())
                 .relatedId(dto.getRelatedId())
+                .build();
+    }
+
+        // Alert Mapper
+    public static AlertDTO convertToAlertDTO(Alert alert) {
+        if (alert == null) {
+            return null;
+        }
+
+        AlertDTO dto = new AlertDTO();
+        dto.setId(alert.getId());
+
+        if (alert.getProduct() != null) {
+            dto.setProductId(alert.getProduct().getId());
+            dto.setProductName(alert.getProduct().getName());
+        }
+
+        if (alert.getBranch() != null) {
+            dto.setBranchId(alert.getBranch().getId());
+            dto.setBranchName(alert.getBranch().getName());
+        }
+
+        dto.setAlertType(alert.getAlertType());
+        dto.setMessage(alert.getMessage());
+
+        if (alert.getTriggeredBy() != null) {
+            dto.setTriggeredById(alert.getTriggeredBy().getId());
+            dto.setTriggeredByName(alert.getTriggeredBy().getName());
+        }
+
+        dto.setResolved(alert.isResolved());
+
+        if (alert.getResolvedBy() != null) {
+            dto.setResolvedById(alert.getResolvedBy().getId());
+            dto.setResolvedByName(alert.getResolvedBy().getName());
+        }
+
+        dto.setCreatedAt(alert.getCreatedAt());
+        dto.setResolvedAt(alert.getResolvedAt());
+        dto.setStatus(alert.getStatus());
+        dto.setCritical(alert.isCritical());
+
+        return dto;
+    }
+
+    public static Alert convertToAlert(AlertDTO dto, Product product, Branch branch,
+                                     User triggeredBy, User resolvedBy) {
+        if (dto == null) {
+            return null;
+        }
+
+        return Alert.builder()
+                .id(dto.getId())
+                .product(product)
+                .branch(branch)
+                .alertType(dto.getAlertType())
+                .message(dto.getMessage())
+                .triggeredBy(triggeredBy)
+                .resolved(dto.isResolved())
+                .resolvedBy(resolvedBy)
+                .createdAt(dto.getCreatedAt())
+                .resolvedAt(dto.getResolvedAt())
+                .status(dto.getStatus() != null ? dto.getStatus() : AlertStatus.ACTIVE)
                 .build();
     }
 }
