@@ -537,66 +537,135 @@ public class EntityDtoMapper {
                 .build();
     }
 
-        // Alert Mapper
-    public static AlertDTO convertToAlertDTO(Alert alert) {
-        if (alert == null) {
-            return null;
+            // Alert Mapper
+        public static AlertDTO convertToAlertDTO(Alert alert) {
+            if (alert == null) {
+                return null;
+            }
+
+            AlertDTO dto = new AlertDTO();
+            dto.setId(alert.getId());
+
+            if (alert.getProduct() != null) {
+                dto.setProductId(alert.getProduct().getId());
+                dto.setProductName(alert.getProduct().getName());
+            }
+
+            if (alert.getBranch() != null) {
+                dto.setBranchId(alert.getBranch().getId());
+                dto.setBranchName(alert.getBranch().getName());
+            }
+
+            dto.setAlertType(alert.getAlertType());
+            dto.setMessage(alert.getMessage());
+
+            if (alert.getTriggeredBy() != null) {
+                dto.setTriggeredById(alert.getTriggeredBy().getId());
+                dto.setTriggeredByName(alert.getTriggeredBy().getName());
+            }
+
+            dto.setResolved(alert.isResolved());
+
+            if (alert.getResolvedBy() != null) {
+                dto.setResolvedById(alert.getResolvedBy().getId());
+                dto.setResolvedByName(alert.getResolvedBy().getName());
+            }
+
+            dto.setCreatedAt(alert.getCreatedAt());
+            dto.setResolvedAt(alert.getResolvedAt());
+            dto.setStatus(alert.getStatus());
+            dto.setCritical(alert.isCritical());
+
+            return dto;
         }
 
-        AlertDTO dto = new AlertDTO();
-        dto.setId(alert.getId());
+        public static Alert convertToAlert(AlertDTO dto, Product product, Branch branch,
+                                         User triggeredBy, User resolvedBy) {
+            if (dto == null) {
+                return null;
+            }
 
-        if (alert.getProduct() != null) {
-            dto.setProductId(alert.getProduct().getId());
-            dto.setProductName(alert.getProduct().getName());
+            return Alert.builder()
+                    .id(dto.getId())
+                    .product(product)
+                    .branch(branch)
+                    .alertType(dto.getAlertType())
+                    .message(dto.getMessage())
+                    .triggeredBy(triggeredBy)
+                    .resolved(dto.isResolved())
+                    .resolvedBy(resolvedBy)
+                    .createdAt(dto.getCreatedAt())
+                    .resolvedAt(dto.getResolvedAt())
+                    .status(dto.getStatus() != null ? dto.getStatus() : AlertStatus.ACTIVE)
+                    .build();
         }
 
-        if (alert.getBranch() != null) {
-            dto.setBranchId(alert.getBranch().getId());
-            dto.setBranchName(alert.getBranch().getName());
+            // RestockRequest Mapper
+        public static RestockRequestDTO convertToRestockRequestDTO(RestockRequest request) {
+            if (request == null) {
+                return null;
+            }
+
+            RestockRequestDTO dto = new RestockRequestDTO();
+            dto.setId(request.getId());
+
+            if (request.getProduct() != null) {
+                dto.setProductId(request.getProduct().getId());
+                dto.setProductName(request.getProduct().getName());
+            }
+
+            if (request.getBranch() != null) {
+                dto.setBranchId(request.getBranch().getId());
+                dto.setBranchName(request.getBranch().getName());
+            }
+
+            if (request.getRequestedBy() != null) {
+                dto.setRequestedById(request.getRequestedBy().getId());
+                dto.setRequestedByName(request.getRequestedBy().getName());
+            }
+
+            dto.setQuantity(request.getQuantity());
+            dto.setStatus(request.getStatus());
+
+            if (request.getSupplier() != null) {
+                dto.setSupplierId(request.getSupplier().getId());
+                dto.setSupplierName(request.getSupplier().getCompanyName());
+            }
+
+            dto.setNotes(request.getNotes());
+
+            if (request.getApprovedBy() != null) {
+                dto.setApprovedById(request.getApprovedBy().getId());
+                dto.setApprovedByName(request.getApprovedBy().getName());
+            }
+
+            dto.setCreatedAt(request.getCreatedAt());
+            dto.setApprovedAt(request.getApprovedAt());
+
+            return dto;
         }
 
-        dto.setAlertType(alert.getAlertType());
-        dto.setMessage(alert.getMessage());
+        public static RestockRequest convertToRestockRequest(RestockRequestDTO dto,
+                                                           Product product,
+                                                           Branch branch,
+                                                           User requestedBy,
+                                                           Supplier supplier,
+                                                           User approvedBy) {
+            if (dto == null) {
+                return null;
+            }
 
-        if (alert.getTriggeredBy() != null) {
-            dto.setTriggeredById(alert.getTriggeredBy().getId());
-            dto.setTriggeredByName(alert.getTriggeredBy().getName());
+            return RestockRequest.builder()
+                    .id(dto.getId())
+                    .product(product)
+                    .branch(branch)
+                    .requestedBy(requestedBy)
+                    .quantity(dto.getQuantity())
+                    .status(dto.getStatus() != null ? dto.getStatus() : RestockStatus.PENDING)
+                    .supplier(supplier)
+                    .notes(dto.getNotes())
+                    .approvedBy(approvedBy)
+                    .approvedAt(dto.getApprovedAt())
+                    .build();
         }
-
-        dto.setResolved(alert.isResolved());
-
-        if (alert.getResolvedBy() != null) {
-            dto.setResolvedById(alert.getResolvedBy().getId());
-            dto.setResolvedByName(alert.getResolvedBy().getName());
-        }
-
-        dto.setCreatedAt(alert.getCreatedAt());
-        dto.setResolvedAt(alert.getResolvedAt());
-        dto.setStatus(alert.getStatus());
-        dto.setCritical(alert.isCritical());
-
-        return dto;
-    }
-
-    public static Alert convertToAlert(AlertDTO dto, Product product, Branch branch,
-                                     User triggeredBy, User resolvedBy) {
-        if (dto == null) {
-            return null;
-        }
-
-        return Alert.builder()
-                .id(dto.getId())
-                .product(product)
-                .branch(branch)
-                .alertType(dto.getAlertType())
-                .message(dto.getMessage())
-                .triggeredBy(triggeredBy)
-                .resolved(dto.isResolved())
-                .resolvedBy(resolvedBy)
-                .createdAt(dto.getCreatedAt())
-                .resolvedAt(dto.getResolvedAt())
-                .status(dto.getStatus() != null ? dto.getStatus() : AlertStatus.ACTIVE)
-                .build();
-    }
 }
