@@ -729,4 +729,113 @@ public class EntityDtoMapper {
                 entity.setReason(dto.getReason());
             }
         }
+
+                // DrugInteraction Mapper
+        public static DrugInteractionDTO convertToDrugInteractionDTO(DrugInteraction interaction) {
+            if (interaction == null) {
+                return null;
+            }
+
+            DrugInteractionDTO dto = new DrugInteractionDTO();
+            dto.setId(interaction.getId());
+
+            if (interaction.getProduct() != null) {
+                dto.setProductId(interaction.getProduct().getId());
+                dto.setProductName(interaction.getProduct().getName());
+                dto.setProductCategory(interaction.getProduct().getCategory().getName());
+            }
+
+            if (interaction.getInteractsWith() != null) {
+                dto.setInteractsWithId(interaction.getInteractsWith().getId());
+                dto.setInteractsWithName(interaction.getInteractsWith().getName());
+                dto.setInteractsWithCategory(interaction.getInteractsWith().getCategory().getName());
+            }
+
+            dto.setSeverity(interaction.getSeverity());
+            dto.setDescription(interaction.getDescription());
+            dto.setClinicalManagement(interaction.getClinicalManagement());
+            dto.setEvidenceLevel(interaction.getEvidenceLevel());
+            dto.setCreatedAt(interaction.getCreatedAt());
+            dto.setSevere(interaction.isSevereInteraction());
+
+            return dto;
+        }
+
+        public static DrugInteraction convertToDrugInteraction(DrugInteractionDTO dto,
+                                                              Product product,
+                                                              Product interactsWith) {
+            if (dto == null) {
+                return null;
+            }
+
+            return DrugInteraction.builder()
+                    .id(dto.getId())
+                    .product(product)
+                    .interactsWith(interactsWith)
+                    .severity(dto.getSeverity())
+                    .description(dto.getDescription())
+                    .clinicalManagement(dto.getClinicalManagement())
+                    .evidenceLevel(dto.getEvidenceLevel())
+                    .build();
+        }
+
+                // Employee Mapper
+        public static EmployeeDTO convertToEmployeeDTO(Employee employee) {
+            if (employee == null) {
+                return null;
+            }
+
+            EmployeeDTO dto = new EmployeeDTO();
+            dto.setId(employee.getId());
+
+            if (employee.getUser() != null) {
+                dto.setUserId(employee.getUser().getId());
+                dto.setUserName(employee.getUser().getName());
+                dto.setUserEmail(employee.getUser().getEmail());
+            }
+
+            if (employee.getBranch() != null) {
+                dto.setBranchId(employee.getBranch().getId());
+                dto.setBranchName(employee.getBranch().getName());
+                dto.setBranchLocation(employee.getBranch().getLocation());
+            }
+
+            dto.setPosition(employee.getPosition());
+            dto.setSalary(employee.getSalary());
+            dto.setHireDate(employee.getHireDate());
+            dto.setCreatedAt(employee.getCreatedAt());
+
+            return dto;
+        }
+
+        public static Employee convertToEmployee(EmployeeDTO dto, User user, Branch branch) {
+            if (dto == null) {
+                return null;
+            }
+
+            return Employee.builder()
+                    .id(dto.getId())
+                    .user(user)
+                    .branch(branch)
+                    .position(dto.getPosition())
+                    .salary(dto.getSalary())
+                    .hireDate(dto.getHireDate())
+                    .build();
+        }
+
+        public static void updateEmployeeFromDTO(EmployeeDTO dto, Employee entity) {
+            if (dto == null || entity == null) {
+                return;
+            }
+
+            if (dto.getPosition() != null) {
+                entity.setPosition(dto.getPosition());
+            }
+            if (dto.getSalary() != null) {
+                entity.setSalary(dto.getSalary());
+            }
+            if (dto.getHireDate() != null) {
+                entity.setHireDate(dto.getHireDate());
+            }
+}
 }
