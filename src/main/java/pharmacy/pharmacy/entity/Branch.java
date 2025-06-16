@@ -35,8 +35,8 @@ public class Branch {
     private LocalDateTime createdAt;
 
     // Relationships
-//    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private Set<Employee> employees = new HashSet<>();
+    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Employee> employees = new HashSet<>();
 
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Inventory> inventories = new HashSet<>();
@@ -44,14 +44,14 @@ public class Branch {
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Stock> stockEntries = new HashSet<>();
 
-//    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private Set<Orders> orders = new HashSet<>();
-//
-//    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private Set<Alert> alerts = new HashSet<>();
-//
-//    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private Set<RestockRequest> restockRequests = new HashSet<>();
+    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Order> orders = new HashSet<>();
+
+    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Alert> alerts = new HashSet<>();
+
+    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<RestockRequest> restockRequests = new HashSet<>();
 
     // Constructors
     public Branch() {}
