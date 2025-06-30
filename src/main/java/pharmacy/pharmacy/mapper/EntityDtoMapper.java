@@ -237,6 +237,59 @@ public class EntityDtoMapper {
             entity.setBatchNumber(dto.getBatchNumber());
         }
     }
+    // Customer Mapper
+public static CustomerDTO convertToCustomerDTO(Customer customer) {
+    if (customer == null) {
+        return null;
+    }
+
+    CustomerDTO dto = new CustomerDTO();
+    dto.setId(customer.getId());
+
+    if (customer.getUser() != null) {
+        dto.setUserId(customer.getUser().getId());
+        dto.setUserName(customer.getUser().getName());
+        dto.setUserEmail(customer.getUser().getEmail());
+        dto.setUserContactNumber(customer.getUser().getContactNumber());
+    }
+
+    dto.setAddress(customer.getAddress());
+    dto.setDateOfBirth(customer.getDateOfBirth());
+    dto.setLoyaltyPoints(customer.getLoyaltyPoints());
+    dto.setCreatedAt(customer.getCreatedAt());
+
+    return dto;
+}
+
+public static Customer convertToCustomer(CustomerDTO dto, User user) {
+    if (dto == null) {
+        return null;
+    }
+
+    return Customer.builder()
+            .id(dto.getId())
+            .user(user)
+            .address(dto.getAddress())
+            .dateOfBirth(dto.getDateOfBirth())
+            .loyaltyPoints(dto.getLoyaltyPoints() != null ? dto.getLoyaltyPoints() : 0)
+            .build();
+}
+
+public static void updateCustomerFromDTO(CustomerDTO dto, Customer entity) {
+    if (dto == null || entity == null) {
+        return;
+    }
+
+    if (dto.getAddress() != null) {
+        entity.setAddress(dto.getAddress());
+    }
+    if (dto.getDateOfBirth() != null) {
+        entity.setDateOfBirth(dto.getDateOfBirth());
+    }
+    if (dto.getLoyaltyPoints() != null) {
+        entity.setLoyaltyPoints(dto.getLoyaltyPoints());
+    }
+}
 
         // Supplier Mapper
         public static SupplierDTO convertToSupplierDTO(Supplier supplier) {
