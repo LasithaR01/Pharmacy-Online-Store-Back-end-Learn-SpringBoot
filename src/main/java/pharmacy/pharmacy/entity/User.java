@@ -38,4 +38,8 @@ public class User {
     public String getName() {
         return "";
     }
+
+    public String getContactNumber() {
+        return "";
+    }
 }
