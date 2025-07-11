@@ -21,7 +21,7 @@ public class Customer {
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false, unique = true,
-               foreignKey = @ForeignKey(name = "fk_customer_user"))
+            foreignKey = @ForeignKey(name = "fk_customer_user"))
     private User user;
 
     @Column(nullable = false)

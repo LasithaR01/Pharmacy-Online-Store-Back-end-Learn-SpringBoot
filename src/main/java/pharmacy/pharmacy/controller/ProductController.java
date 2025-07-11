@@ -1,5 +1,6 @@
 package pharmacy.pharmacy.controller;
 
+import io.sentry.Sentry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -7,9 +8,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.sentry.Sentry;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pharmacy.pharmacy.dto.product.ProductCreateRequest;
+import pharmacy.pharmacy.dto.product.ProductPageResponse;
+import pharmacy.pharmacy.dto.product.ProductResponse;
 import pharmacy.pharmacy.entity.Product;
 import pharmacy.pharmacy.exception.GlobalException;
 import pharmacy.pharmacy.service.ProductService;
@@ -36,7 +41,7 @@ public class ProductController {
                     content = @Content)
     })
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
+    public ResponseEntity<List<ProductResponse>> getAllProducts() {
         try {
             return ResponseEntity.ok(productService.getAllProducts());
         } catch (Exception e) {
@@ -56,14 +61,9 @@ public class ProductController {
                     content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(
+    public ResponseEntity<ProductPageResponse> getProductPageData(
             @Parameter(description = "ID of the product to be retrieved") @PathVariable Integer id) {
-        try {
-            return ResponseEntity.ok(productService.getProductById(id));
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            throw new GlobalException("Error retrieving product with id: " + id, e);
-        }
+        return ResponseEntity.ok(productService.getProductPageData(id));
     }
 
     @Operation(summary = "Get product by barcode", description = "Retrieve a specific product by its barcode")
@@ -98,14 +98,10 @@ public class ProductController {
                     content = @Content)
     })
     @PostMapping
-    public ResponseEntity<Product> createProduct(
-            @Parameter(description = "Product object to be created") @RequestBody Product product) {
-        try {
-            return ResponseEntity.ok(productService.createProduct(product));
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            throw new GlobalException("Error creating product", e);
-        }
+    public ResponseEntity<Void> createProduct(
+            @Valid @RequestBody ProductCreateRequest request) {
+        productService.createProduct(request);
+        return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 Created, no body
     }
 
     @Operation(summary = "Update product", description = "Update an existing product's information")
@@ -119,15 +115,11 @@ public class ProductController {
                     content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(
+    public ResponseEntity<Void> updateProduct(
             @Parameter(description = "ID of the product to be updated") @PathVariable Integer id,
-            @Parameter(description = "Updated product object") @RequestBody Product product) {
-        try {
-            return ResponseEntity.ok(productService.updateProduct(id, product));
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            throw new GlobalException("Error updating product with id: " + id, e);
-        }
+            @Parameter(description = "Updated product object") @RequestBody ProductCreateRequest request) {
+        ResponseEntity.ok(productService.updateProduct(id, request));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // no body
     }
 
     @Operation(summary = "Delete product", description = "Remove a product from the inventory")

@@ -26,10 +26,10 @@ public interface SupplierRepository extends JpaRepository<Supplier, Integer> {
     Optional<Supplier> findByTaxId(String taxId);
 
     // Find suppliers with no associated user
-    List<Supplier> findByUserIsNull();
+//    List<Supplier> findByUserIsNull();
 
     // Find by user ID
-    Optional<Supplier> findByUserId(Integer userId);
+//    Optional<Supplier> findByUserId(Integer userId);
 
     // Count total suppliers
     long count();
@@ -39,7 +39,7 @@ public interface SupplierRepository extends JpaRepository<Supplier, Integer> {
 
     // Custom query for supplier statistics
     @Query("SELECT s.companyName, COUNT(st), SUM(st.quantityAdded) " +
-           "FROM Supplier s LEFT JOIN s.stockEntries st " +
-           "GROUP BY s.id")
+            "FROM Supplier s LEFT JOIN s.stockEntries st " +
+            "GROUP BY s.id")
     List<Object[]> getSupplierStatistics();
 }

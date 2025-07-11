@@ -7,7 +7,10 @@ import pharmacy.pharmacy.dao.OrderItemRepository;
 import pharmacy.pharmacy.dao.OrderRepository;
 import pharmacy.pharmacy.dto.OrderDTO;
 import pharmacy.pharmacy.dto.OrderItemDTO;
-import pharmacy.pharmacy.entity.*;
+import pharmacy.pharmacy.entity.Branch;
+import pharmacy.pharmacy.entity.Order;
+import pharmacy.pharmacy.entity.OrderItem;
+import pharmacy.pharmacy.entity.User;
 import pharmacy.pharmacy.enums.OrderStatus;
 import pharmacy.pharmacy.enums.PaymentMethod;
 import pharmacy.pharmacy.enums.PaymentStatus;
@@ -28,41 +31,35 @@ public class OrderService {
     private final BranchService branchService;
     private final UserService userService;
     private final ProductService productService;
+    private final OrderItemService orderItemService;
 
     public OrderService(OrderRepository orderRepository,
-                      OrderItemRepository orderItemRepository,
-                      BranchService branchService,
-                      UserService userService,
-                      ProductService productService) {
+                        OrderItemRepository orderItemRepository,
+                        BranchService branchService,
+                        UserService userService,
+                        ProductService productService,
+                        OrderItemService orderItemService) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.branchService = branchService;
         this.userService = userService;
         this.productService = productService;
+        this.orderItemService = orderItemService;
     }
 
     @Transactional(readOnly = true)
     public List<OrderDTO> getAllOrders() {
-        try {
-            return orderRepository.findAll().stream()
-                    .map(this::convertToDTO)
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            throw new GlobalException("Failed to retrieve all orders", e);
-        }
+        return orderRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public OrderDTO getOrderById(int id) {
-        try {
-            Order order = orderRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + id));
-            return convertToDTO(order);
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            throw new GlobalException("Failed to retrieve order with id: " + id, e);
-        }
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + id));
+        List<OrderItem> orderItems = orderItemRepository.findByOrder(order);
+        return convertToDTO(order, orderItems);
     }
 
     public Order getOrderEntityById(int id) {
@@ -76,76 +73,35 @@ public class OrderService {
     }
 
     public OrderDTO createOrder(OrderDTO orderDTO) {
-        try {
-            // Validate required fields
-            if (orderDTO.getUserId() == null) {
-                throw new GlobalException("User ID is required");
-            }
-            if (orderDTO.getBranchId() == null) {
-                throw new GlobalException("Branch ID is required");
-            }
-
-            // Get related entities
-            User user = userService.getUserEntityById(orderDTO.getUserId());
-            Branch branch = branchService.getBranchEntityById(orderDTO.getBranchId());
-
-            Order order = new Order();
-            order.setUser(user);
-            order.setBranch(branch);
-            order.setOrderDate(new Date());
-            order.setStatus(OrderStatus.CART);
-            order.setPaymentStatus(PaymentStatus.PENDING);
-            order.setTotalAmount(BigDecimal.ZERO);
-            order.setDiscountAmount(BigDecimal.ZERO);
-            order.setTaxAmount(BigDecimal.ZERO);
-
-            Order savedOrder = orderRepository.save(order);
-            return convertToDTO(savedOrder);
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            throw new GlobalException("Failed to create order", e);
+        // Validate input
+        if (orderDTO.getBranchId() == null) {
+            throw new GlobalException("Branch ID is required");
         }
-    }
 
-    public OrderItemDTO addItemToOrder(OrderItemDTO orderItemDTO) {
-        try {
-            // Validate required fields
-            if (orderItemDTO.getOrderId() == null) {
-                throw new GlobalException("Order ID is required");
-            }
-            if (orderItemDTO.getProductId() == null) {
-                throw new GlobalException("Product ID is required");
-            }
-            if (orderItemDTO.getQuantity() == null || orderItemDTO.getQuantity() <= 0) {
-                throw new GlobalException("Quantity must be greater than 0");
-            }
+        Branch branch = branchService.getBranchEntityById(orderDTO.getBranchId());
+        User user = (orderDTO.getUserId() != null)
+                ? userService.getUserEntityById(orderDTO.getUserId())
+                : null;
 
-            Order order = getOrderEntityById(orderItemDTO.getOrderId());
-            Product product = productService.getProductEntityById(orderItemDTO.getProductId());
+        // Create Order
+        Order order = new Order();
+        order.setUser(user);
+        order.setBranch(branch);
+        order.setOrderDate(new Date());
+        order.setStatus(orderDTO.getStatus());
+        order.setPaymentStatus(orderDTO.getPaymentStatus());
+        order.setTotalAmount(orderDTO.getTotalAmount());
+        order.setDiscountAmount(orderDTO.getDiscountAmount());
+        order.setTaxAmount(orderDTO.getTaxAmount());
 
-            // Check if item already exists in order
-            OrderItem existingItem = orderItemRepository.findByOrderAndProduct(order, product);
-            if (existingItem != null) {
-                // Update quantity if item already exists
-                existingItem.setQuantity(existingItem.getQuantity() + orderItemDTO.getQuantity());
-                OrderItem updatedItem = orderItemRepository.save(existingItem);
-                return convertToDTO(updatedItem);
-            }
+        Order savedOrder = orderRepository.save(order);
 
-            // Create new order item
-            OrderItem orderItem = new OrderItem();
-            orderItem.setOrder(order);
-            orderItem.setProduct(product);
-            orderItem.setQuantity(orderItemDTO.getQuantity());
-            orderItem.setPrice(product.getPrice());
-            orderItem.setDiscountAmount(BigDecimal.ZERO);
-
-            OrderItem savedItem = orderItemRepository.save(orderItem);
-            return convertToDTO(savedItem);
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            throw new GlobalException("Failed to add item to order", e);
+        // Add order items
+        for (OrderItemDTO itemDTO : orderDTO.getOrderItems()) {
+            orderItemService.addItemToOrder(savedOrder, itemDTO);
         }
+
+        return convertToDTO(savedOrder);
     }
 
     public OrderDTO updateOrderStatus(int id, OrderStatus status) {
@@ -284,7 +240,8 @@ public class OrderService {
     private OrderDTO convertToDTO(Order order) {
         OrderDTO dto = new OrderDTO();
         dto.setId(order.getId());
-        dto.setUserId(order.getUser().getId());
+        dto.setUserId(order.getUser() != null ? order.getUser().getId() : null);
+        dto.setCustomerName(order.getUser() != null ? order.getUser().getName() : "Guest");
         dto.setBranchId(order.getBranch().getId());
         dto.setOrderDate(order.getOrderDate());
         dto.setTotalAmount(order.getTotalAmount());
@@ -294,6 +251,31 @@ public class OrderService {
         dto.setPaymentMethod(order.getPaymentMethod());
         dto.setPaymentStatus(order.getPaymentStatus());
         dto.setNotes(order.getNotes());
+        return dto;
+    }
+
+    private OrderDTO convertToDTO(Order order, List<OrderItem> orderItems) {
+        OrderDTO dto = new OrderDTO();
+        dto.setId(order.getId());
+        dto.setUserId(order.getUser() != null ? order.getUser().getId() : null);
+        dto.setBranchId(order.getBranch().getId());
+        dto.setOrderDate(order.getOrderDate());
+        dto.setTotalAmount(order.getTotalAmount());
+        dto.setDiscountAmount(order.getDiscountAmount());
+        dto.setTaxAmount(order.getTaxAmount());
+        dto.setStatus(order.getStatus());
+        dto.setPaymentMethod(order.getPaymentMethod());
+        dto.setPaymentStatus(order.getPaymentStatus());
+        dto.setNotes(order.getNotes());
+        dto.setCustomerName(order.getUser() != null ? order.getUser().getName() : "Guest");
+
+        // Correctly map and collect the orderItems to a list of OrderItemDTOs
+        List<OrderItemDTO> itemDTOs = orderItems.stream()
+                .map(OrderItemDTO::new)
+                .collect(Collectors.toList());
+
+        dto.setOrderItems(itemDTOs);
+
         return dto;
     }
 

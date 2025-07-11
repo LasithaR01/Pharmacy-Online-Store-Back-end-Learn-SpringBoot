@@ -25,28 +25,28 @@ public class OrderItemController {
         this.orderItemService = orderItemService;
     }
 
-    @Operation(summary = "Add item to order", description = "Add a new item to an existing order")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Item added successfully",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = OrderItemDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input",
-                    content = @Content),
-            @ApiResponse(responseCode = "404", description = "Order or product not found",
-                    content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal server error",
-                    content = @Content)
-    })
-    @PostMapping
-    public ResponseEntity<OrderItemDTO> addItemToOrder(
-            @Parameter(description = "Order item to be added") @RequestBody OrderItemDTO orderItemDTO) {
-        try {
-            return ResponseEntity.ok(orderItemService.addItemToOrder(orderItemDTO));
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            throw new GlobalException("Error adding item to order", e);
-        }
-    }
+//    @Operation(summary = "Add item to order", description = "Add a new item to an existing order")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "Item added successfully",
+//                    content = @Content(mediaType = "application/json",
+//                            schema = @Schema(implementation = OrderItemDTO.class))),
+//            @ApiResponse(responseCode = "400", description = "Invalid input",
+//                    content = @Content),
+//            @ApiResponse(responseCode = "404", description = "Order or product not found",
+//                    content = @Content),
+//            @ApiResponse(responseCode = "500", description = "Internal server error",
+//                    content = @Content)
+//    })
+//    @PostMapping
+//    public ResponseEntity<OrderItemDTO> addItemToOrder(
+//            @Parameter(description = "Order item to be added") @RequestBody OrderItemDTO orderItemDTO) {
+//        try {
+//            return ResponseEntity.ok(orderItemService.addItemToOrder(orderItemDTO));
+//        } catch (Exception e) {
+//            Sentry.captureException(e);
+//            throw new GlobalException("Error adding item to order", e);
+//        }
+//    }
 
     @Operation(summary = "Update item quantity", description = "Update the quantity of an existing order item")
     @ApiResponses(value = {

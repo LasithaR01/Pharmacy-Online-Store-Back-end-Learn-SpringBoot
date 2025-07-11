@@ -41,12 +41,7 @@ public class OrderController {
     })
     @GetMapping
     public ResponseEntity<List<OrderDTO>> getAllOrders() {
-        try {
-            return ResponseEntity.ok(orderService.getAllOrders());
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            throw new GlobalException("Error retrieving orders", e);
-        }
+        return ResponseEntity.ok(orderService.getAllOrders());
     }
 
     @Operation(summary = "Get order by ID", description = "Retrieve a specific order by its ID")
@@ -83,12 +78,7 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<OrderDTO> createOrder(
             @Parameter(description = "Order object to be created") @RequestBody OrderDTO orderDTO) {
-        try {
-            return ResponseEntity.ok(orderService.createOrder(orderDTO));
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            throw new GlobalException("Error creating order", e);
-        }
+        return ResponseEntity.ok(orderService.createOrder(orderDTO));
     }
 
     @Operation(summary = "Update order status", description = "Update the status of an existing order")

@@ -1,4 +1,4 @@
-package pharmacy.pharmacy.dto;
+package pharmacy.pharmacy.dto.product;
 
 import lombok.Data;
 import java.math.BigDecimal;

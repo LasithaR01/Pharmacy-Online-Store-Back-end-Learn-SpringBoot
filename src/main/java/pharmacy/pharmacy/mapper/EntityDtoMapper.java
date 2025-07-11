@@ -30,39 +30,39 @@ public class EntityDtoMapper {
     }
 
     // Product Mapper
-    public static ProductDTO convertToProductDTO(Product product) {
-        ProductDTO dto = new ProductDTO();
-        dto.setName(product.getName());
-        if (product.getCategory() != null) {
-            dto.setCategoryId(product.getCategory().getId());
-        }
-        dto.setDescription(product.getDescription());
-        dto.setPrice(product.getPrice());
-        dto.setCostPrice(product.getCostPrice());
-        dto.setStockQuantity(product.getStockQuantity());
-        dto.setReorderLevel(product.getReorderLevel());
-        dto.setExpiryDate(product.getExpiryDate());
-        dto.setBatchNumber(product.getBatchNumber());
-        dto.setBarcode(product.getBarcode());
-        dto.setIsPrescriptionRequired(product.getIsPrescriptionRequired());
-        return dto;
-    }
+//    public static ProductDTO convertToProductDTO(Product product) {
+//        ProductDTO dto = new ProductDTO();
+//        dto.setName(product.getName());
+//        if (product.getCategory() != null) {
+//            dto.setCategoryId(product.getCategory().getId());
+//        }
+//        dto.setDescription(product.getDescription());
+//        dto.setPrice(product.getPrice());
+//        dto.setCostPrice(product.getCostPrice());
+//        dto.setStockQuantity(product.getStockQuantity());
+//        dto.setReorderLevel(product.getReorderLevel());
+//        dto.setExpiryDate(product.getExpiryDate());
+//        dto.setBatchNumber(product.getBatchNumber());
+//        dto.setBarcode(product.getBarcode());
+//        dto.setIsPrescriptionRequired(product.getIsPrescriptionRequired());
+//        return dto;
+//    }
 
-    public static Product convertToProduct(ProductDTO dto, Category category) {
-        Product product = new Product();
-        product.setName(dto.getName());
-        product.setCategory(category);
-        product.setDescription(dto.getDescription());
-        product.setPrice(dto.getPrice());
-        product.setCostPrice(dto.getCostPrice());
-        product.setStockQuantity(dto.getStockQuantity());
-        product.setReorderLevel(dto.getReorderLevel());
-        product.setExpiryDate(dto.getExpiryDate());
-        product.setBatchNumber(dto.getBatchNumber());
-        product.setBarcode(dto.getBarcode());
-        product.setIsPrescriptionRequired(dto.getIsPrescriptionRequired());
-        return product;
-    }
+//    public static Product convertToProduct(ProductDTO dto, Category category) {
+//        Product product = new Product();
+//        product.setName(dto.getName());
+//        product.setCategory(category);
+//        product.setDescription(dto.getDescription());
+//        product.setPrice(dto.getPrice());
+//        product.setCostPrice(dto.getCostPrice());
+//        product.setStockQuantity(dto.getStockQuantity());
+//        product.setReorderLevel(dto.getReorderLevel());
+//        product.setExpiryDate(dto.getExpiryDate());
+//        product.setBatchNumber(dto.getBatchNumber());
+//        product.setBarcode(dto.getBarcode());
+//        product.setIsPrescriptionRequired(dto.getIsPrescriptionRequired());
+//        return product;
+//    }
 
     // Category Mapper
     public static CategoryDTO convertToCategoryDTO(Category category) {
@@ -165,7 +165,7 @@ public class EntityDtoMapper {
 
 
 
-//     Stock Mapper
+    //     Stock Mapper
     public static StockDTO convertToStockDTO(Stock stock) {
         if (stock == null) {
             return null;
@@ -200,7 +200,7 @@ public class EntityDtoMapper {
     }
 
     public static Stock convertToStock(StockDTO dto, Product product, Supplier supplier,
-                                     Branch branch, User approvedBy) {
+                                       Branch branch, User approvedBy) {
         if (dto == null) {
             return null;
         }
@@ -238,97 +238,97 @@ public class EntityDtoMapper {
         }
     }
     // Customer Mapper
-public static CustomerDTO convertToCustomerDTO(Customer customer) {
-    if (customer == null) {
-        return null;
-    }
-
-    CustomerDTO dto = new CustomerDTO();
-    dto.setId(customer.getId());
-
-    if (customer.getUser() != null) {
-        dto.setUserId(customer.getUser().getId());
-        dto.setUserName(customer.getUser().getName());
-        dto.setUserEmail(customer.getUser().getEmail());
-        dto.setUserContactNumber(customer.getUser().getContactNumber());
-    }
-
-    dto.setAddress(customer.getAddress());
-    dto.setDateOfBirth(customer.getDateOfBirth());
-    dto.setLoyaltyPoints(customer.getLoyaltyPoints());
-    dto.setCreatedAt(customer.getCreatedAt());
-
-    return dto;
-}
-
-public static Customer convertToCustomer(CustomerDTO dto, User user) {
-    if (dto == null) {
-        return null;
-    }
-
-    return Customer.builder()
-            .id(dto.getId())
-            .user(user)
-            .address(dto.getAddress())
-            .dateOfBirth(dto.getDateOfBirth())
-            .loyaltyPoints(dto.getLoyaltyPoints() != null ? dto.getLoyaltyPoints() : 0)
-            .build();
-}
-
-public static void updateCustomerFromDTO(CustomerDTO dto, Customer entity) {
-    if (dto == null || entity == null) {
-        return;
-    }
-
-    if (dto.getAddress() != null) {
-        entity.setAddress(dto.getAddress());
-    }
-    if (dto.getDateOfBirth() != null) {
-        entity.setDateOfBirth(dto.getDateOfBirth());
-    }
-    if (dto.getLoyaltyPoints() != null) {
-        entity.setLoyaltyPoints(dto.getLoyaltyPoints());
-    }
-}
-
-        // Supplier Mapper
-        public static SupplierDTO convertToSupplierDTO(Supplier supplier) {
-            if (supplier == null) return null;
-
-            SupplierDTO dto = new SupplierDTO();
-            dto.setId(supplier.getId());
-
-            if (supplier.getUser() != null) {
-                dto.setUserId(supplier.getUser().getId());
-            }
-
-            dto.setCompanyName(supplier.getCompanyName());
-            dto.setAddress(supplier.getAddress());
-            dto.setTaxId(supplier.getTaxId());
-            dto.setCreatedAt(supplier.getCreatedAt());
-
-            // Additional calculated fields
-            if (supplier.getStockEntries() != null) {
-                dto.setTotalStockItems(supplier.getStockEntries().size());
-            }
-
-            return dto;
+    public static CustomerDTO convertToCustomerDTO(Customer customer) {
+        if (customer == null) {
+            return null;
         }
 
-        public static Supplier convertToSupplier(SupplierDTO dto, User user) {
-            if (dto == null) return null;
+        CustomerDTO dto = new CustomerDTO();
+        dto.setId(customer.getId());
 
-            Supplier supplier = new Supplier();
-            supplier.setId(dto.getId());
-            supplier.setUser(user);
-            supplier.setCompanyName(dto.getCompanyName());
-            supplier.setAddress(dto.getAddress());
-            supplier.setTaxId(dto.getTaxId());
-
-            return supplier;
+        if (customer.getUser() != null) {
+            dto.setUserId(customer.getUser().getId());
+            dto.setUserName(customer.getUser().getName());
+            dto.setUserEmail(customer.getUser().getEmail());
+            dto.setUserContactNumber(customer.getUser().getContactNumber());
         }
 
-        // Order Mapper
+        dto.setAddress(customer.getAddress());
+        dto.setDateOfBirth(customer.getDateOfBirth());
+        dto.setLoyaltyPoints(customer.getLoyaltyPoints());
+        dto.setCreatedAt(customer.getCreatedAt());
+
+        return dto;
+    }
+
+    public static Customer convertToCustomer(CustomerDTO dto, User user) {
+        if (dto == null) {
+            return null;
+        }
+
+        return Customer.builder()
+                .id(dto.getId())
+                .user(user)
+                .address(dto.getAddress())
+                .dateOfBirth(dto.getDateOfBirth())
+                .loyaltyPoints(dto.getLoyaltyPoints() != null ? dto.getLoyaltyPoints() : 0)
+                .build();
+    }
+
+    public static void updateCustomerFromDTO(CustomerDTO dto, Customer entity) {
+        if (dto == null || entity == null) {
+            return;
+        }
+
+        if (dto.getAddress() != null) {
+            entity.setAddress(dto.getAddress());
+        }
+        if (dto.getDateOfBirth() != null) {
+            entity.setDateOfBirth(dto.getDateOfBirth());
+        }
+        if (dto.getLoyaltyPoints() != null) {
+            entity.setLoyaltyPoints(dto.getLoyaltyPoints());
+        }
+    }
+
+    // Supplier Mapper
+    public static SupplierDTO convertToSupplierDTO(Supplier supplier) {
+        if (supplier == null) return null;
+
+        SupplierDTO dto = new SupplierDTO();
+        dto.setId(supplier.getId());
+
+//        if (supplier.getUser() != null) {
+//            dto.setUserId(supplier.getUser().getId());
+//        }
+
+        dto.setCompanyName(supplier.getCompanyName());
+        dto.setAddress(supplier.getAddress());
+        dto.setTaxId(supplier.getTaxId());
+        dto.setCreatedAt(supplier.getCreatedAt());
+
+        // Additional calculated fields
+        if (supplier.getStockEntries() != null) {
+            dto.setTotalStockItems(supplier.getStockEntries().size());
+        }
+
+        return dto;
+    }
+
+    public static Supplier convertToSupplier(SupplierDTO dto, User user) {
+        if (dto == null) return null;
+
+        Supplier supplier = new Supplier();
+        supplier.setId(dto.getId());
+//        supplier.setUser(user);
+        supplier.setCompanyName(dto.getCompanyName());
+        supplier.setAddress(dto.getAddress());
+        supplier.setTaxId(dto.getTaxId());
+
+        return supplier;
+    }
+
+    // Order Mapper
     public static OrderDTO convertToOrderDTO(Order order) {
         if (order == null) {
             return null;
@@ -363,8 +363,8 @@ public static void updateCustomerFromDTO(CustomerDTO dto, Customer entity) {
 
         if (order.getOrderItems() != null) {
             List<OrderItemDTO> itemDTOs = order.getOrderItems().stream()
-                .map(EntityDtoMapper::convertToOrderItemDTO)
-                .collect(Collectors.toList());
+                    .map(EntityDtoMapper::convertToOrderItemDTO)
+                    .collect(Collectors.toList());
             dto.setOrderItems(itemDTOs);
         }
 
@@ -416,8 +416,8 @@ public static void updateCustomerFromDTO(CustomerDTO dto, Customer entity) {
         dto.setPrice(orderItem.getPrice());
         dto.setDiscountAmount(orderItem.getDiscountAmount());
         dto.setTotalPrice(orderItem.getPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity()))
-                                  .subtract(orderItem.getDiscountAmount() != null ?
-                                           orderItem.getDiscountAmount() : BigDecimal.ZERO));
+                .subtract(orderItem.getDiscountAmount() != null ?
+                        orderItem.getDiscountAmount() : BigDecimal.ZERO));
 
         return dto;
     }
@@ -480,7 +480,7 @@ public static void updateCustomerFromDTO(CustomerDTO dto, Customer entity) {
         }
     }
 
-        // Prescription Mapper
+    // Prescription Mapper
     public static PrescriptionDTO convertToPrescriptionDTO(Prescription prescription) {
         if (prescription == null) {
             return null;
@@ -532,7 +532,7 @@ public static void updateCustomerFromDTO(CustomerDTO dto, Customer entity) {
         return prescription;
     }
 
-        // Notification Mapper
+    // Notification Mapper
     public static NotificationDTO convertToNotificationDTO(Notification notification) {
         if (notification == null) {
             return null;
@@ -590,305 +590,305 @@ public static void updateCustomerFromDTO(CustomerDTO dto, Customer entity) {
                 .build();
     }
 
-            // Alert Mapper
-        public static AlertDTO convertToAlertDTO(Alert alert) {
-            if (alert == null) {
-                return null;
-            }
-
-            AlertDTO dto = new AlertDTO();
-            dto.setId(alert.getId());
-
-            if (alert.getProduct() != null) {
-                dto.setProductId(alert.getProduct().getId());
-                dto.setProductName(alert.getProduct().getName());
-            }
-
-            if (alert.getBranch() != null) {
-                dto.setBranchId(alert.getBranch().getId());
-                dto.setBranchName(alert.getBranch().getName());
-            }
-
-            dto.setAlertType(alert.getAlertType());
-            dto.setMessage(alert.getMessage());
-
-            if (alert.getTriggeredBy() != null) {
-                dto.setTriggeredById(alert.getTriggeredBy().getId());
-                dto.setTriggeredByName(alert.getTriggeredBy().getName());
-            }
-
-            dto.setResolved(alert.isResolved());
-
-            if (alert.getResolvedBy() != null) {
-                dto.setResolvedById(alert.getResolvedBy().getId());
-                dto.setResolvedByName(alert.getResolvedBy().getName());
-            }
-
-            dto.setCreatedAt(alert.getCreatedAt());
-            dto.setResolvedAt(alert.getResolvedAt());
-            dto.setStatus(alert.getStatus());
-            dto.setCritical(alert.isCritical());
-
-            return dto;
+    // Alert Mapper
+    public static AlertDTO convertToAlertDTO(Alert alert) {
+        if (alert == null) {
+            return null;
         }
 
-        public static Alert convertToAlert(AlertDTO dto, Product product, Branch branch,
-                                         User triggeredBy, User resolvedBy) {
-            if (dto == null) {
-                return null;
-            }
+        AlertDTO dto = new AlertDTO();
+        dto.setId(alert.getId());
 
-            return Alert.builder()
-                    .id(dto.getId())
-                    .product(product)
-                    .branch(branch)
-                    .alertType(dto.getAlertType())
-                    .message(dto.getMessage())
-                    .triggeredBy(triggeredBy)
-                    .resolved(dto.isResolved())
-                    .resolvedBy(resolvedBy)
-                    .createdAt(dto.getCreatedAt())
-                    .resolvedAt(dto.getResolvedAt())
-                    .status(dto.getStatus() != null ? dto.getStatus() : AlertStatus.ACTIVE)
-                    .build();
+        if (alert.getProduct() != null) {
+            dto.setProductId(alert.getProduct().getId());
+            dto.setProductName(alert.getProduct().getName());
         }
 
-            // RestockRequest Mapper
-        public static RestockRequestDTO convertToRestockRequestDTO(RestockRequest request) {
-            if (request == null) {
-                return null;
-            }
-
-            RestockRequestDTO dto = new RestockRequestDTO();
-            dto.setId(request.getId());
-
-            if (request.getProduct() != null) {
-                dto.setProductId(request.getProduct().getId());
-                dto.setProductName(request.getProduct().getName());
-            }
-
-            if (request.getBranch() != null) {
-                dto.setBranchId(request.getBranch().getId());
-                dto.setBranchName(request.getBranch().getName());
-            }
-
-            if (request.getRequestedBy() != null) {
-                dto.setRequestedById(request.getRequestedBy().getId());
-                dto.setRequestedByName(request.getRequestedBy().getName());
-            }
-
-            dto.setQuantity(request.getQuantity());
-            dto.setStatus(request.getStatus());
-
-            if (request.getSupplier() != null) {
-                dto.setSupplierId(request.getSupplier().getId());
-                dto.setSupplierName(request.getSupplier().getCompanyName());
-            }
-
-            dto.setNotes(request.getNotes());
-
-            if (request.getApprovedBy() != null) {
-                dto.setApprovedById(request.getApprovedBy().getId());
-                dto.setApprovedByName(request.getApprovedBy().getName());
-            }
-
-            dto.setCreatedAt(request.getCreatedAt());
-            dto.setApprovedAt(request.getApprovedAt());
-
-            return dto;
+        if (alert.getBranch() != null) {
+            dto.setBranchId(alert.getBranch().getId());
+            dto.setBranchName(alert.getBranch().getName());
         }
 
-        public static RestockRequest convertToRestockRequest(RestockRequestDTO dto,
+        dto.setAlertType(alert.getAlertType());
+        dto.setMessage(alert.getMessage());
+
+        if (alert.getTriggeredBy() != null) {
+            dto.setTriggeredById(alert.getTriggeredBy().getId());
+            dto.setTriggeredByName(alert.getTriggeredBy().getName());
+        }
+
+        dto.setResolved(alert.isResolved());
+
+        if (alert.getResolvedBy() != null) {
+            dto.setResolvedById(alert.getResolvedBy().getId());
+            dto.setResolvedByName(alert.getResolvedBy().getName());
+        }
+
+        dto.setCreatedAt(alert.getCreatedAt());
+        dto.setResolvedAt(alert.getResolvedAt());
+        dto.setStatus(alert.getStatus());
+        dto.setCritical(alert.isCritical());
+
+        return dto;
+    }
+
+    public static Alert convertToAlert(AlertDTO dto, Product product, Branch branch,
+                                       User triggeredBy, User resolvedBy) {
+        if (dto == null) {
+            return null;
+        }
+
+        return Alert.builder()
+                .id(dto.getId())
+                .product(product)
+                .branch(branch)
+                .alertType(dto.getAlertType())
+                .message(dto.getMessage())
+                .triggeredBy(triggeredBy)
+                .resolved(dto.isResolved())
+                .resolvedBy(resolvedBy)
+                .createdAt(dto.getCreatedAt())
+                .resolvedAt(dto.getResolvedAt())
+                .status(dto.getStatus() != null ? dto.getStatus() : AlertStatus.ACTIVE)
+                .build();
+    }
+
+    // RestockRequest Mapper
+    public static RestockRequestDTO convertToRestockRequestDTO(RestockRequest request) {
+        if (request == null) {
+            return null;
+        }
+
+        RestockRequestDTO dto = new RestockRequestDTO();
+        dto.setId(request.getId());
+
+        if (request.getProduct() != null) {
+            dto.setProductId(request.getProduct().getId());
+            dto.setProductName(request.getProduct().getName());
+        }
+
+        if (request.getBranch() != null) {
+            dto.setBranchId(request.getBranch().getId());
+            dto.setBranchName(request.getBranch().getName());
+        }
+
+        if (request.getRequestedBy() != null) {
+            dto.setRequestedById(request.getRequestedBy().getId());
+            dto.setRequestedByName(request.getRequestedBy().getName());
+        }
+
+        dto.setQuantity(request.getQuantity());
+        dto.setStatus(request.getStatus());
+
+        if (request.getSupplier() != null) {
+            dto.setSupplierId(request.getSupplier().getId());
+            dto.setSupplierName(request.getSupplier().getCompanyName());
+        }
+
+        dto.setNotes(request.getNotes());
+
+        if (request.getApprovedBy() != null) {
+            dto.setApprovedById(request.getApprovedBy().getId());
+            dto.setApprovedByName(request.getApprovedBy().getName());
+        }
+
+        dto.setCreatedAt(request.getCreatedAt());
+        dto.setApprovedAt(request.getApprovedAt());
+
+        return dto;
+    }
+
+    public static RestockRequest convertToRestockRequest(RestockRequestDTO dto,
+                                                         Product product,
+                                                         Branch branch,
+                                                         User requestedBy,
+                                                         Supplier supplier,
+                                                         User approvedBy) {
+        if (dto == null) {
+            return null;
+        }
+
+        return RestockRequest.builder()
+                .id(dto.getId())
+                .product(product)
+                .branch(branch)
+                .requestedBy(requestedBy)
+                .quantity(dto.getQuantity())
+                .status(dto.getStatus() != null ? dto.getStatus() : RestockStatus.PENDING)
+                .supplier(supplier)
+                .notes(dto.getNotes())
+                .approvedBy(approvedBy)
+                .approvedAt(dto.getApprovedAt())
+                .build();
+    }
+
+    // ProductAlternative Mapper
+    public static ProductAlternativeDTO convertToProductAlternativeDTO(ProductAlternative alternative) {
+        if (alternative == null) {
+            return null;
+        }
+
+        ProductAlternativeDTO dto = new ProductAlternativeDTO();
+        dto.setId(alternative.getId());
+
+        if (alternative.getProduct() != null) {
+            dto.setProductId(alternative.getProduct().getId());
+            dto.setProductName(alternative.getProduct().getName());
+            if (alternative.getProduct().getCategory() != null) {
+                dto.setProductCategory(alternative.getProduct().getCategory().getName());
+            }
+        }
+
+        if (alternative.getAlternativeProduct() != null) {
+            dto.setAlternativeProductId(alternative.getAlternativeProduct().getId());
+            dto.setAlternativeProductName(alternative.getAlternativeProduct().getName());
+            if (alternative.getAlternativeProduct().getCategory() != null) {
+                dto.setAlternativeProductCategory(alternative.getAlternativeProduct().getCategory().getName());
+            }
+        }
+
+        dto.setReason(alternative.getReason());
+        dto.setCreatedAt(alternative.getCreatedAt());
+
+        // Calculate business logic flags
+        dto.setSameCategory(alternative.isSameCategory());
+        dto.setCheaperAlternative(alternative.isCheaperAlternative());
+        dto.setInStock(alternative.isInStock());
+
+        return dto;
+    }
+
+    public static ProductAlternative convertToProductAlternative(ProductAlternativeDTO dto,
+                                                                 Product product,
+                                                                 Product alternativeProduct) {
+        if (dto == null) {
+            return null;
+        }
+
+        return ProductAlternative.builder()
+                .id(dto.getId())
+                .product(product)
+                .alternativeProduct(alternativeProduct)
+                .reason(dto.getReason())
+                .build();
+    }
+
+    public static void updateProductAlternativeFromDTO(ProductAlternativeDTO dto, ProductAlternative entity) {
+        if (dto == null || entity == null) {
+            return;
+        }
+
+        if (dto.getReason() != null) {
+            entity.setReason(dto.getReason());
+        }
+    }
+
+    // DrugInteraction Mapper
+    public static DrugInteractionDTO convertToDrugInteractionDTO(DrugInteraction interaction) {
+        if (interaction == null) {
+            return null;
+        }
+
+        DrugInteractionDTO dto = new DrugInteractionDTO();
+        dto.setId(interaction.getId());
+
+        if (interaction.getProduct() != null) {
+            dto.setProductId(interaction.getProduct().getId());
+            dto.setProductName(interaction.getProduct().getName());
+            dto.setProductCategory(interaction.getProduct().getCategory().getName());
+        }
+
+        if (interaction.getInteractsWith() != null) {
+            dto.setInteractsWithId(interaction.getInteractsWith().getId());
+            dto.setInteractsWithName(interaction.getInteractsWith().getName());
+            dto.setInteractsWithCategory(interaction.getInteractsWith().getCategory().getName());
+        }
+
+        dto.setSeverity(interaction.getSeverity());
+        dto.setDescription(interaction.getDescription());
+        dto.setClinicalManagement(interaction.getClinicalManagement());
+        dto.setEvidenceLevel(interaction.getEvidenceLevel());
+        dto.setCreatedAt(interaction.getCreatedAt());
+        dto.setSevere(interaction.isSevereInteraction());
+
+        return dto;
+    }
+
+    public static DrugInteraction convertToDrugInteraction(DrugInteractionDTO dto,
                                                            Product product,
-                                                           Branch branch,
-                                                           User requestedBy,
-                                                           Supplier supplier,
-                                                           User approvedBy) {
-            if (dto == null) {
-                return null;
-            }
-
-            return RestockRequest.builder()
-                    .id(dto.getId())
-                    .product(product)
-                    .branch(branch)
-                    .requestedBy(requestedBy)
-                    .quantity(dto.getQuantity())
-                    .status(dto.getStatus() != null ? dto.getStatus() : RestockStatus.PENDING)
-                    .supplier(supplier)
-                    .notes(dto.getNotes())
-                    .approvedBy(approvedBy)
-                    .approvedAt(dto.getApprovedAt())
-                    .build();
+                                                           Product interactsWith) {
+        if (dto == null) {
+            return null;
         }
 
-                // ProductAlternative Mapper
-        public static ProductAlternativeDTO convertToProductAlternativeDTO(ProductAlternative alternative) {
-            if (alternative == null) {
-                return null;
-            }
+        return DrugInteraction.builder()
+                .id(dto.getId())
+                .product(product)
+                .interactsWith(interactsWith)
+                .severity(dto.getSeverity())
+                .description(dto.getDescription())
+                .clinicalManagement(dto.getClinicalManagement())
+                .evidenceLevel(dto.getEvidenceLevel())
+                .build();
+    }
 
-            ProductAlternativeDTO dto = new ProductAlternativeDTO();
-            dto.setId(alternative.getId());
-
-            if (alternative.getProduct() != null) {
-                dto.setProductId(alternative.getProduct().getId());
-                dto.setProductName(alternative.getProduct().getName());
-                if (alternative.getProduct().getCategory() != null) {
-                    dto.setProductCategory(alternative.getProduct().getCategory().getName());
-                }
-            }
-
-            if (alternative.getAlternativeProduct() != null) {
-                dto.setAlternativeProductId(alternative.getAlternativeProduct().getId());
-                dto.setAlternativeProductName(alternative.getAlternativeProduct().getName());
-                if (alternative.getAlternativeProduct().getCategory() != null) {
-                    dto.setAlternativeProductCategory(alternative.getAlternativeProduct().getCategory().getName());
-                }
-            }
-
-            dto.setReason(alternative.getReason());
-            dto.setCreatedAt(alternative.getCreatedAt());
-
-            // Calculate business logic flags
-            dto.setSameCategory(alternative.isSameCategory());
-            dto.setCheaperAlternative(alternative.isCheaperAlternative());
-            dto.setInStock(alternative.isInStock());
-
-            return dto;
+    // Employee Mapper
+    public static EmployeeDTO convertToEmployeeDTO(Employee employee) {
+        if (employee == null) {
+            return null;
         }
 
-        public static ProductAlternative convertToProductAlternative(ProductAlternativeDTO dto,
-                                                                   Product product,
-                                                                   Product alternativeProduct) {
-            if (dto == null) {
-                return null;
-            }
+        EmployeeDTO dto = new EmployeeDTO();
+        dto.setId(employee.getId());
 
-            return ProductAlternative.builder()
-                    .id(dto.getId())
-                    .product(product)
-                    .alternativeProduct(alternativeProduct)
-                    .reason(dto.getReason())
-                    .build();
+        if (employee.getUser() != null) {
+            dto.setUserId(employee.getUser().getId());
+            dto.setUserName(employee.getUser().getName());
+            dto.setUserEmail(employee.getUser().getEmail());
         }
 
-        public static void updateProductAlternativeFromDTO(ProductAlternativeDTO dto, ProductAlternative entity) {
-            if (dto == null || entity == null) {
-                return;
-            }
-
-            if (dto.getReason() != null) {
-                entity.setReason(dto.getReason());
-            }
+        if (employee.getBranch() != null) {
+            dto.setBranchId(employee.getBranch().getId());
+            dto.setBranchName(employee.getBranch().getName());
+            dto.setBranchLocation(employee.getBranch().getLocation());
         }
 
-                // DrugInteraction Mapper
-        public static DrugInteractionDTO convertToDrugInteractionDTO(DrugInteraction interaction) {
-            if (interaction == null) {
-                return null;
-            }
+        dto.setPosition(employee.getPosition());
+        dto.setSalary(employee.getSalary());
+        dto.setHireDate(employee.getHireDate());
+        dto.setCreatedAt(employee.getCreatedAt());
 
-            DrugInteractionDTO dto = new DrugInteractionDTO();
-            dto.setId(interaction.getId());
+        return dto;
+    }
 
-            if (interaction.getProduct() != null) {
-                dto.setProductId(interaction.getProduct().getId());
-                dto.setProductName(interaction.getProduct().getName());
-                dto.setProductCategory(interaction.getProduct().getCategory().getName());
-            }
-
-            if (interaction.getInteractsWith() != null) {
-                dto.setInteractsWithId(interaction.getInteractsWith().getId());
-                dto.setInteractsWithName(interaction.getInteractsWith().getName());
-                dto.setInteractsWithCategory(interaction.getInteractsWith().getCategory().getName());
-            }
-
-            dto.setSeverity(interaction.getSeverity());
-            dto.setDescription(interaction.getDescription());
-            dto.setClinicalManagement(interaction.getClinicalManagement());
-            dto.setEvidenceLevel(interaction.getEvidenceLevel());
-            dto.setCreatedAt(interaction.getCreatedAt());
-            dto.setSevere(interaction.isSevereInteraction());
-
-            return dto;
+    public static Employee convertToEmployee(EmployeeDTO dto, User user, Branch branch) {
+        if (dto == null) {
+            return null;
         }
 
-        public static DrugInteraction convertToDrugInteraction(DrugInteractionDTO dto,
-                                                              Product product,
-                                                              Product interactsWith) {
-            if (dto == null) {
-                return null;
-            }
+        return Employee.builder()
+                .id(dto.getId())
+                .user(user)
+                .branch(branch)
+                .position(dto.getPosition())
+                .salary(dto.getSalary())
+                .hireDate(dto.getHireDate())
+                .build();
+    }
 
-            return DrugInteraction.builder()
-                    .id(dto.getId())
-                    .product(product)
-                    .interactsWith(interactsWith)
-                    .severity(dto.getSeverity())
-                    .description(dto.getDescription())
-                    .clinicalManagement(dto.getClinicalManagement())
-                    .evidenceLevel(dto.getEvidenceLevel())
-                    .build();
+    public static void updateEmployeeFromDTO(EmployeeDTO dto, Employee entity) {
+        if (dto == null || entity == null) {
+            return;
         }
 
-                // Employee Mapper
-        public static EmployeeDTO convertToEmployeeDTO(Employee employee) {
-            if (employee == null) {
-                return null;
-            }
-
-            EmployeeDTO dto = new EmployeeDTO();
-            dto.setId(employee.getId());
-
-            if (employee.getUser() != null) {
-                dto.setUserId(employee.getUser().getId());
-                dto.setUserName(employee.getUser().getName());
-                dto.setUserEmail(employee.getUser().getEmail());
-            }
-
-            if (employee.getBranch() != null) {
-                dto.setBranchId(employee.getBranch().getId());
-                dto.setBranchName(employee.getBranch().getName());
-                dto.setBranchLocation(employee.getBranch().getLocation());
-            }
-
-            dto.setPosition(employee.getPosition());
-            dto.setSalary(employee.getSalary());
-            dto.setHireDate(employee.getHireDate());
-            dto.setCreatedAt(employee.getCreatedAt());
-
-            return dto;
+        if (dto.getPosition() != null) {
+            entity.setPosition(dto.getPosition());
         }
-
-        public static Employee convertToEmployee(EmployeeDTO dto, User user, Branch branch) {
-            if (dto == null) {
-                return null;
-            }
-
-            return Employee.builder()
-                    .id(dto.getId())
-                    .user(user)
-                    .branch(branch)
-                    .position(dto.getPosition())
-                    .salary(dto.getSalary())
-                    .hireDate(dto.getHireDate())
-                    .build();
+        if (dto.getSalary() != null) {
+            entity.setSalary(dto.getSalary());
         }
-
-        public static void updateEmployeeFromDTO(EmployeeDTO dto, Employee entity) {
-            if (dto == null || entity == null) {
-                return;
-            }
-
-            if (dto.getPosition() != null) {
-                entity.setPosition(dto.getPosition());
-            }
-            if (dto.getSalary() != null) {
-                entity.setSalary(dto.getSalary());
-            }
-            if (dto.getHireDate() != null) {
-                entity.setHireDate(dto.getHireDate());
-            }
-}
+        if (dto.getHireDate() != null) {
+            entity.setHireDate(dto.getHireDate());
+        }
+    }
 }

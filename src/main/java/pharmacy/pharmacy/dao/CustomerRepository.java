@@ -20,7 +20,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     // Find customers by loyalty points range
     @Query("SELECT c FROM Customer c WHERE c.loyaltyPoints BETWEEN :minPoints AND :maxPoints")
     List<Customer> findByLoyaltyPointsRange(@Param("minPoints") Integer minPoints,
-                                           @Param("maxPoints") Integer maxPoints);
+                                            @Param("maxPoints") Integer maxPoints);
 
     // Find customers born after a specific date
     List<Customer> findByDateOfBirthAfter(Date dateOfBirth);

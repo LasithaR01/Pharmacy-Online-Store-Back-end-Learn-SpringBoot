@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.sentry.Sentry;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pharmacy.pharmacy.dto.category.CategoryResponse;
 import pharmacy.pharmacy.entity.Category;
 import pharmacy.pharmacy.exception.GlobalException;
 import pharmacy.pharmacy.service.CategoryService;
@@ -36,7 +37,7 @@ public class CategoryController {
                     content = @Content)
     })
     @GetMapping
-    public ResponseEntity<List<Category>> getAllCategories() {
+    public ResponseEntity<List<CategoryResponse>> getAllCategories() {
         try {
             return ResponseEntity.ok(categoryService.getAllCategories());
         } catch (Exception e) {
@@ -56,14 +57,9 @@ public class CategoryController {
                     content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategoryById(
+    public ResponseEntity<CategoryResponse> getCategoryById(
             @Parameter(description = "ID of the category to be retrieved") @PathVariable Integer id) {
-        try {
-            return ResponseEntity.ok(categoryService.getCategoryById(id));
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            throw new GlobalException("Error retrieving category with id: " + id, e);
-        }
+        return ResponseEntity.ok(new CategoryResponse(categoryService.getCategoryById(id)));
     }
 
     @Operation(summary = "Create a new category", description = "Add a new product category")
