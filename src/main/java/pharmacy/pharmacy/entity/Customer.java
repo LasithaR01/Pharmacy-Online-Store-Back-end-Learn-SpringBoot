@@ -21,7 +21,11 @@ public class Customer {
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false, unique = true,
+<<<<<<< HEAD
             foreignKey = @ForeignKey(name = "fk_customer_user"))
+=======
+               foreignKey = @ForeignKey(name = "fk_customer_user"))
+>>>>>>> origin/main
     private User user;
 
     @Column(nullable = false)

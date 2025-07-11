@@ -37,6 +37,13 @@ public class User {
         return "";
     }
 
+<<<<<<< HEAD
+=======
+    public String getName() {
+        return "";
+    }
+
+>>>>>>> origin/main
     public String getContactNumber() {
         return "";
     }

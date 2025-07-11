@@ -69,22 +69,22 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Stock> stocks;
 
-//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<OrderItem> orderItems;
-//
-//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Alert> alerts;
-//
-//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<ProductAlternative> productAlternatives;
-//
-//    @OneToMany(mappedBy = "interactsWith", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<DrugInteraction> interactionsAsTarget;
-//
-//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<DrugInteraction> interactionsAsSource;
-//
-//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<RestockRequest> restockRequests;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItem> orderItems;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Alert> alerts;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductAlternative> productAlternatives;
+
+    @OneToMany(mappedBy = "interactsWith", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DrugInteraction> interactionsAsTarget;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DrugInteraction> interactionsAsSource;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RestockRequest> restockRequests;
 
 }

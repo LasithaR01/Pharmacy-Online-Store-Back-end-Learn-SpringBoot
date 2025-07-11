@@ -21,16 +21,24 @@ public class OpenApiConfig {
 
         // Define tags in the order you want them to appear
         List<Tag> tags = Arrays.asList(
-            new Tag().name("Authentication").extensions(java.util.Map.of("x-order", 10)),
-            new Tag().name("User Management").extensions(java.util.Map.of("x-order", 9)),
-            new Tag().name("Branch Management").extensions(java.util.Map.of("x-order", 3)),
-            new Tag().name("Product Management").extensions(java.util.Map.of("x-order", 4)),
-            new Tag().name("Category Management").extensions(java.util.Map.of("x-order", 5)),
-            new Tag().name("Inventory Management").extensions(java.util.Map.of("x-order", 6)),
+                new Tag().name("Authentication").extensions(java.util.Map.of("x-order", 18)),
+                new Tag().name("User Management").extensions(java.util.Map.of("x-order", 17)),
+                new Tag().name("Branch Management").extensions(java.util.Map.of("x-order", 3)),
+                new Tag().name("Product Management").extensions(java.util.Map.of("x-order", 4)),
+                new Tag().name("Category Management").extensions(java.util.Map.of("x-order", 5)),
+                new Tag().name("Inventory Management").extensions(java.util.Map.of("x-order", 6)),
                 new Tag().name("Supplier Management").extensions(java.util.Map.of("x-order", 7)),
                 new Tag().name("Stock Management").extensions(java.util.Map.of("x-order", 8)),
                 new Tag().name("Order Management").extensions(java.util.Map.of("x-order", 1)),
-                new Tag().name("Order Item Management").extensions(java.util.Map.of("x-order", 2))
+                new Tag().name("Order Item Management").extensions(java.util.Map.of("x-order", 2)),
+                new Tag().name("Prescription Management").extensions(java.util.Map.of("x-order", 9)),
+                new Tag().name("Notification Management").extensions(java.util.Map.of("x-order", 10)),
+                new Tag().name("Alert Management").extensions(java.util.Map.of("x-order", 11)),
+                new Tag().name("Restock Request Management").extensions(java.util.Map.of("x-order", 12)),
+                new Tag().name("Product Alternatives Management").extensions(java.util.Map.of("x-order", 13)),
+                new Tag().name("Drug Interaction Management").extensions(java.util.Map.of("x-order", 14)),
+                new Tag().name("Employee Management").extensions(java.util.Map.of("x-order", 15)),
+                new Tag().name("Customer Management").extensions(java.util.Map.of("x-order", 16))
         );
 
         return new OpenAPI()

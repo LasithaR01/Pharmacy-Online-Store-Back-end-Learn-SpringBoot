@@ -16,19 +16,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class CustomerService {
+
     private final CustomerRepository customerRepository;
     private final UserRepository userRepository;
 
     public CustomerService(CustomerRepository customerRepository,
-                           UserRepository userRepository) {
+                         UserRepository userRepository) {
         this.customerRepository = customerRepository;
         this.userRepository = userRepository;
-    }
-
-    public User getCustomerByPhoneNumber(String phoneNumber) {
-        return userRepository.findByPhoneNumber(phoneNumber)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with phoneNumber: " + phoneNumber));
     }
 
     @Transactional(readOnly = true)
@@ -188,5 +185,4 @@ public class CustomerService {
             throw new GlobalException("Failed to redeem loyalty points for customer with id: " + customerId, e);
         }
     }
-
 }
