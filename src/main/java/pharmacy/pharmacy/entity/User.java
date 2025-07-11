@@ -36,4 +36,8 @@ public class User {
     public String getFullName() {
         return "";
     }
+
+    public String getContactNumber() {
+        return "";
+    }
 }

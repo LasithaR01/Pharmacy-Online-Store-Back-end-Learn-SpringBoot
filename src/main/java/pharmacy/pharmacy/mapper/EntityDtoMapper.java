@@ -166,8 +166,7 @@ public class EntityDtoMapper {
     }
 
 
-
-//     Stock Mapper
+    //     Stock Mapper
     public static StockDTO convertToStockDTO(Stock stock) {
         if (stock == null) {
             return null;
@@ -202,7 +201,7 @@ public class EntityDtoMapper {
     }
 
     public static Stock convertToStock(StockDTO dto, Product product, Supplier supplier,
-                                     Branch branch, User approvedBy) {
+                                       Branch branch, User approvedBy) {
         if (dto == null) {
             return null;
         }
@@ -240,44 +239,68 @@ public class EntityDtoMapper {
         }
     }
 
-        // Supplier Mapper
-        public static SupplierDTO convertToSupplierDTO(Supplier supplier) {
-            if (supplier == null) return null;
+    // Customer Mapper
+    public static CustomerDTO convertToCustomerDTO(Customer customer) {
+        if (customer == null) {
+            return null;
+        }
 
-            SupplierDTO dto = new SupplierDTO();
-            dto.setId(supplier.getId());
+        CustomerDTO dto = new CustomerDTO();
+        dto.setId(customer.getId());
+
+        if (customer.getUser() != null) {
+            dto.setUserId(customer.getUser().getId());
+            dto.setUserName(customer.getUser().getName());
+            dto.setUserEmail(customer.getUser().getEmail());
+            dto.setUserContactNumber(customer.getUser().getContactNumber());
+        }
+
+        dto.setAddress(customer.getAddress());
+        dto.setDateOfBirth(customer.getDateOfBirth());
+        dto.setLoyaltyPoints(customer.getLoyaltyPoints());
+        dto.setCreatedAt(customer.getCreatedAt());
+
+        return dto;
+    }
+
+    // Supplier Mapper
+    public static SupplierDTO convertToSupplierDTO(Supplier supplier) {
+        if (supplier == null) return null;
+
+        SupplierDTO dto = new SupplierDTO();
+        dto.setId(supplier.getId());
 
 //            if (supplier.getUser() != null) {
 //                dto.setUserId(supplier.getUser().getId());
 //            }
 
-            dto.setCompanyName(supplier.getCompanyName());
-            dto.setAddress(supplier.getAddress());
-            dto.setTaxId(supplier.getTaxId());
-            dto.setCreatedAt(supplier.getCreatedAt());
+        dto.setCompanyName(supplier.getCompanyName());
+        dto.setAddress(supplier.getAddress());
+        dto.setTaxId(supplier.getTaxId());
+        dto.setCreatedAt(supplier.getCreatedAt());
 
-            // Additional calculated fields
-            if (supplier.getStockEntries() != null) {
-                dto.setTotalStockItems(supplier.getStockEntries().size());
-            }
-
-            return dto;
+        // Additional calculated fields
+        if (supplier.getStockEntries() != null) {
+            dto.setTotalStockItems(supplier.getStockEntries().size());
         }
 
-        public static Supplier convertToSupplier(SupplierDTO dto, User user) {
-            if (dto == null) return null;
+        return dto;
+    }
 
-            Supplier supplier = new Supplier();
-            supplier.setId(dto.getId());
+    public static Supplier convertToSupplier(SupplierDTO dto, User user) {
+        if (dto == null) return null;
+
+        Supplier supplier = new Supplier();
+        supplier.setId(dto.getId());
 //            supplier.setUser(user);
-            supplier.setCompanyName(dto.getCompanyName());
-            supplier.setAddress(dto.getAddress());
-            supplier.setTaxId(dto.getTaxId());
+        supplier.setCompanyName(dto.getCompanyName());
+        supplier.setAddress(dto.getAddress());
+        supplier.setTaxId(dto.getTaxId());
 
-            return supplier;
-        }
+        return supplier;
+    }
 
-        // Order Mapper
+    // Order Mapper
     public static OrderDTO convertToOrderDTO(Order order) {
         if (order == null) {
             return null;
@@ -312,8 +335,8 @@ public class EntityDtoMapper {
 
         if (order.getOrderItems() != null) {
             List<OrderItemDTO> itemDTOs = order.getOrderItems().stream()
-                .map(EntityDtoMapper::convertToOrderItemDTO)
-                .collect(Collectors.toList());
+                    .map(EntityDtoMapper::convertToOrderItemDTO)
+                    .collect(Collectors.toList());
             dto.setOrderItems(itemDTOs);
         }
 
@@ -365,8 +388,8 @@ public class EntityDtoMapper {
         dto.setPrice(orderItem.getPrice());
         dto.setDiscountAmount(orderItem.getDiscountAmount());
         dto.setTotalPrice(orderItem.getPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity()))
-                                  .subtract(orderItem.getDiscountAmount() != null ?
-                                           orderItem.getDiscountAmount() : BigDecimal.ZERO));
+                .subtract(orderItem.getDiscountAmount() != null ?
+                        orderItem.getDiscountAmount() : BigDecimal.ZERO));
 
         return dto;
     }
