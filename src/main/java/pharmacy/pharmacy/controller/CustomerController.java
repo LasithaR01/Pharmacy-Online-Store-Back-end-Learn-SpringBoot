@@ -67,7 +67,7 @@ public class CustomerController {
     }
 
     @Operation(summary = "Get customer by user ID",
-               description = "Retrieve customer information for a specific user")
+            description = "Retrieve customer information for a specific user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Customer found",
                     content = @Content(mediaType = "application/json",
@@ -158,7 +158,7 @@ public class CustomerController {
     }
 
     @Operation(summary = "Get customers by loyalty points range",
-               description = "Retrieve customers with loyalty points within a specific range")
+            description = "Retrieve customers with loyalty points within a specific range")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Customers found",
                     content = @Content(mediaType = "application/json",
@@ -181,7 +181,7 @@ public class CustomerController {
     }
 
     @Operation(summary = "Add loyalty points",
-               description = "Add loyalty points to a customer's account")
+            description = "Add loyalty points to a customer's account")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Points added successfully",
                     content = @Content(mediaType = "application/json",
@@ -206,7 +206,7 @@ public class CustomerController {
     }
 
     @Operation(summary = "Redeem loyalty points",
-               description = "Redeem loyalty points from a customer's account")
+            description = "Redeem loyalty points from a customer's account")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Points redeemed successfully",
                     content = @Content(mediaType = "application/json",
