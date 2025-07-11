@@ -2,10 +2,14 @@ package pharmacy.pharmacy.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pharmacy.pharmacy.dto.category.CategoryResponse;
+import pharmacy.pharmacy.dto.product.ProductPageResponse;
 import pharmacy.pharmacy.entity.Category;
+import pharmacy.pharmacy.entity.Product;
 import pharmacy.pharmacy.exception.ResourceNotFoundException;
 import pharmacy.pharmacy.dao.CategoryRepository;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {
@@ -17,8 +21,16 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+    public List<CategoryResponse> getAllCategories() {
+        return categoryRepository.findAll().stream()
+                .map(category -> {
+                    CategoryResponse dto = new CategoryResponse();
+                    dto.setId(category.getId());
+                    dto.setName(category.getName());
+                    dto.setDescription(category.getDescription());
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)

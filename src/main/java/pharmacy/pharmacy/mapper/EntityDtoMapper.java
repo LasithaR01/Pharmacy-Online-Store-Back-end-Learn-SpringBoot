@@ -1,9 +1,9 @@
 package pharmacy.pharmacy.mapper;
 
 import pharmacy.pharmacy.dto.*;
+import pharmacy.pharmacy.dto.product.ProductDTO;
 import pharmacy.pharmacy.entity.*;
 import pharmacy.pharmacy.enums.OrderStatus;
-import pharmacy.pharmacy.enums.PaymentMethod;
 import pharmacy.pharmacy.enums.PaymentStatus;
 
 import java.math.BigDecimal;
@@ -247,9 +247,9 @@ public class EntityDtoMapper {
             SupplierDTO dto = new SupplierDTO();
             dto.setId(supplier.getId());
 
-            if (supplier.getUser() != null) {
-                dto.setUserId(supplier.getUser().getId());
-            }
+//            if (supplier.getUser() != null) {
+//                dto.setUserId(supplier.getUser().getId());
+//            }
 
             dto.setCompanyName(supplier.getCompanyName());
             dto.setAddress(supplier.getAddress());
@@ -269,7 +269,7 @@ public class EntityDtoMapper {
 
             Supplier supplier = new Supplier();
             supplier.setId(dto.getId());
-            supplier.setUser(user);
+//            supplier.setUser(user);
             supplier.setCompanyName(dto.getCompanyName());
             supplier.setAddress(dto.getAddress());
             supplier.setTaxId(dto.getTaxId());

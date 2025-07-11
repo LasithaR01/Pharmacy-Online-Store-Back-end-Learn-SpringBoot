@@ -58,14 +58,14 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
 
-        ValidationErrorResponse errorResponse = new ValidationErrorResponse(
-                LocalDateTime.now(),
-                "Validation failed",
-                errors,
-                HttpStatus.BAD_REQUEST.value()
-        );
+        ValidationErrorResponse response = new ValidationErrorResponse();
+        response.setTimestamp(LocalDateTime.now().toString());
+        response.setMessage("Validation failed");
+        response.setDetails("Validation errors");
+        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        response.setValidationErrors(errors);
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
@@ -114,17 +114,17 @@ public class GlobalExceptionHandler {
         }
     }
 
-    public static class ValidationErrorResponse extends ErrorResponse {
-        private Map<String, String> validationErrors;
-
-        public ValidationErrorResponse(LocalDateTime timestamp, String message,
-                                     Map<String, String> validationErrors, int status) {
-            super(timestamp, message, "Validation errors", status);
-            this.validationErrors = validationErrors;
-        }
-
-        public Map<String, String> getValidationErrors() {
-            return validationErrors;
-        }
-    }
+//    public static class ValidationErrorResponse extends ErrorResponse {
+//        private Map<String, String> validationErrors;
+//
+//        public ValidationErrorResponse(LocalDateTime timestamp, String message,
+//                                     Map<String, String> validationErrors, int status) {
+//            super(timestamp, message, "Validation errors", status);
+//            this.validationErrors = validationErrors;
+//        }
+//
+//        public Map<String, String> getValidationErrors() {
+//            return validationErrors;
+//        }
+//    }
 }

@@ -29,4 +29,5 @@ public class OrderDTO {
     private String userName;
     private String branchName;
     private String processedByName;
+    private String customerName;
 }

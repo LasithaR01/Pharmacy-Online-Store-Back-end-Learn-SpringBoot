@@ -81,10 +81,10 @@ public class SupplierService {
             if (supplierDTO.getTaxId() != null) {
                 existingSupplier.setTaxId(supplierDTO.getTaxId());
             }
-            if (supplierDTO.getUserId() != null) {
-                User user = userService.getUserEntityById(supplierDTO.getUserId());
-                existingSupplier.setUser(user);
-            }
+//            if (supplierDTO.getUserId() != null) {
+//                User user = userService.getUserEntityById(supplierDTO.getUserId());
+//                existingSupplier.setUser(user);
+//            }
 
             Supplier updatedSupplier = supplierRepository.save(existingSupplier);
             return EntityDtoMapper.convertToSupplierDTO(updatedSupplier);

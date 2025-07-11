@@ -19,9 +19,9 @@ public class Supplier {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", unique = true)
-    private User user;
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id", unique = true)
+//    private User user;
 
     @Column(name = "company_name", nullable = false, length = 255)
     private String companyName;

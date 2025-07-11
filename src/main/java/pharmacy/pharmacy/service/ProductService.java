@@ -1,12 +1,19 @@
 package pharmacy.pharmacy.service;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pharmacy.pharmacy.dto.product.ProductCreateRequest;
+import pharmacy.pharmacy.dto.product.ProductPageResponse;
+import pharmacy.pharmacy.dto.product.ProductResponse;
+import pharmacy.pharmacy.entity.Category;
 import pharmacy.pharmacy.entity.Product;
+import pharmacy.pharmacy.exception.GlobalException;
 import pharmacy.pharmacy.exception.ResourceNotFoundException;
 import pharmacy.pharmacy.dao.ProductRepository;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -20,8 +27,19 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<ProductResponse> getAllProducts() {
+        return productRepository.findAll().stream()
+                .map(product -> {
+                    ProductResponse dto = new ProductResponse();
+                    dto.setId(product.getId());
+                    dto.setName(product.getName());
+                    dto.setPrice(product.getPrice());
+                    dto.setCategoryName(product.getCategory() != null ? product.getCategory().getName() : null);
+                    dto.setBarcode(product.getBarcode());
+                    dto.setStockQuantity(product.getStockQuantity());
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -31,33 +49,69 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
+    public ProductPageResponse getProductPageData(Integer id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
+        return new ProductPageResponse(product);
+    }
+
+    @Transactional(readOnly = true)
     public Product getProductByBarcode(String barcode) {
         return productRepository.findByBarcode(barcode)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with barcode: " + barcode));
     }
 
     @Transactional
-    public Product createProduct(Product product) {
-        // Ensure category exists
-        categoryService.getCategoryById(product.getCategory().getId());
+    public Product createProduct(ProductCreateRequest request) {
+        // Check for duplicate barcode
+        if (productRepository.existsByBarcode(request.getBarcode())) {
+            throw new GlobalException(
+                    "Product with this barcode already exists.",
+                    HttpStatus.CONFLICT,
+                    "PRODUCT_EXISTS"
+            );
+        }
+
+        Category category = null;
+        if(request.getCategoryId() != null) {
+            category = categoryService.getCategoryById(request.getCategoryId());
+        }
+
+        Product product = new Product();
+        product.setName(request.getName());
+        product.setDescription(request.getDescription());
+        product.setPrice(request.getPrice());
+        product.setCostPrice(request.getCostPrice());
+        product.setStockQuantity(request.getStockQuantity());
+        product.setReorderLevel(request.getReorderLevel());
+        product.setExpiryDate(request.getExpiryDate());
+        product.setBatchNumber(request.getBatchNumber());
+        product.setBarcode(request.getBarcode());
+        product.setCategory(category);
+
         return productRepository.save(product);
     }
 
     @Transactional
-    public Product updateProduct(Integer id, Product productDetails) {
+    public Product updateProduct(Integer id, ProductCreateRequest request) {
         Product product = getProductById(id);
 
-        product.setName(productDetails.getName());
-        product.setCategory(productDetails.getCategory());
-        product.setDescription(productDetails.getDescription());
-        product.setPrice(productDetails.getPrice());
-        product.setCostPrice(productDetails.getCostPrice());
-        product.setStockQuantity(productDetails.getStockQuantity());
-        product.setReorderLevel(productDetails.getReorderLevel());
-        product.setExpiryDate(productDetails.getExpiryDate());
-        product.setBatchNumber(productDetails.getBatchNumber());
-        product.setBarcode(productDetails.getBarcode());
-        product.setIsPrescriptionRequired(productDetails.getIsPrescriptionRequired());
+        Category category = null;
+        if(request.getCategoryId() != null) {
+            category = categoryService.getCategoryById(request.getCategoryId());
+        }
+
+        product.setName(request.getName());
+        product.setCategory(category);
+        product.setDescription(request.getDescription());
+        product.setPrice(request.getPrice());
+        product.setCostPrice(request.getCostPrice());
+        product.setStockQuantity(request.getStockQuantity());
+        product.setReorderLevel(request.getReorderLevel());
+        product.setExpiryDate(request.getExpiryDate());
+        product.setBatchNumber(request.getBatchNumber());
+        product.setBarcode(request.getBarcode());
+//        product.setIsPrescriptionRequired(request.getIsPrescriptionRequired());
 
         return productRepository.save(product);
     }
