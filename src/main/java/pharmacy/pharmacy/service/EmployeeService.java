@@ -7,7 +7,10 @@ import pharmacy.pharmacy.dao.BranchRepository;
 import pharmacy.pharmacy.dao.EmployeeRepository;
 import pharmacy.pharmacy.dao.UserRepository;
 import pharmacy.pharmacy.dto.EmployeeDTO;
-import pharmacy.pharmacy.entity.*;
+import pharmacy.pharmacy.dto.employee.EmployeeCreateRequest;
+import pharmacy.pharmacy.entity.Branch;
+import pharmacy.pharmacy.entity.Employee;
+import pharmacy.pharmacy.entity.User;
 import pharmacy.pharmacy.exception.GlobalException;
 import pharmacy.pharmacy.exception.ResourceNotFoundException;
 import pharmacy.pharmacy.mapper.EntityDtoMapper;
@@ -23,13 +26,17 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final UserRepository userRepository;
     private final BranchRepository branchRepository;
+    private final BranchService branchService;
 
     public EmployeeService(EmployeeRepository employeeRepository,
-                         UserRepository userRepository,
-                         BranchRepository branchRepository) {
+                           UserRepository userRepository,
+                           BranchRepository branchRepository,
+                           BranchService branchService
+    ) {
         this.employeeRepository = employeeRepository;
         this.userRepository = userRepository;
         this.branchRepository = branchRepository;
+        this.branchService = branchService;
     }
 
     @Transactional(readOnly = true)
@@ -83,41 +90,33 @@ public class EmployeeService {
         }
     }
 
-    public EmployeeDTO createEmployee(EmployeeDTO employeeDTO) {
+    @Transactional
+    public EmployeeDTO createEmployee(EmployeeCreateRequest request) {
         try {
-            // Validate required fields
-            if (employeeDTO.getUserId() == null) {
-                throw new GlobalException("User ID must be specified");
-            }
-            if (employeeDTO.getBranchId() == null) {
-                throw new GlobalException("Branch ID must be specified");
-            }
-            if (employeeDTO.getPosition() == null || employeeDTO.getPosition().trim().isEmpty()) {
-                throw new GlobalException("Position cannot be empty");
-            }
-            if (employeeDTO.getSalary() == null || employeeDTO.getSalary().compareTo(BigDecimal.ZERO) <= 0) {
-                throw new GlobalException("Salary must be a positive value");
-            }
-            if (employeeDTO.getHireDate() == null) {
-                throw new GlobalException("Hire date must be specified");
-            }
 
-            // Check if user exists and is not already an employee
-            User user = userRepository.findById(employeeDTO.getUserId())
-                    .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + employeeDTO.getUserId()));
+            Branch branch = request.getBranchId() != null ? branchService.getBranchEntityById(request.getBranchId()) : null;
 
-            if (employeeRepository.existsByUserId(user.getId())) {
-                throw new GlobalException("User is already registered as an employee");
-            }
+            // create User
+            User user = User.builder()
+                    .username(request.getUsername())
+                    .email(request.getEmail())
+                    .password(request.getPassword())
+                    .phoneNumber(request.getPhoneNumber())
+                    .name(request.getName())
+                    .build();
+            user = userRepository.save(user);
 
-            // Check if branch exists
-            Branch branch = branchRepository.findById(employeeDTO.getBranchId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Branch not found with id: " + employeeDTO.getBranchId()));
+            // create Employee
+            Employee employee = Employee.builder()
+                    .user(user)
+                    .branch(branch)
+                    .position(request.getPosition())
+                    .salary(request.getSalary())
+                    .hireDate(request.getHireDate())
+                    .build();
+            employee = employeeRepository.save(employee);
 
-            // Create new employee
-            Employee employee = EntityDtoMapper.convertToEmployee(employeeDTO, user, branch);
-            Employee savedEmployee = employeeRepository.save(employee);
-            return EntityDtoMapper.convertToEmployeeDTO(savedEmployee);
+            return EntityDtoMapper.convertToEmployeeDTO(employee);
         } catch (Exception e) {
             Sentry.captureException(e);
             throw new GlobalException("Failed to create employee", e);

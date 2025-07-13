@@ -176,6 +176,7 @@ public class EntityDtoMapper {
 
         if (stock.getProduct() != null) {
             dto.setProductId(stock.getProduct().getId());
+            dto.setProductName(stock.getProduct().getName());
         }
 
         if (stock.getSupplier() != null) {
@@ -190,6 +191,7 @@ public class EntityDtoMapper {
 
         if (stock.getBranch() != null) {
             dto.setBranchId(stock.getBranch().getId());
+            dto.setBranchName(stock.getBranch().getName());
         }
 
         if (stock.getApprovedBy() != null) {
@@ -197,26 +199,6 @@ public class EntityDtoMapper {
         }
 
         return dto;
-    }
-
-    public static Stock convertToStock(StockDTO dto, Product product, Supplier supplier,
-                                       Branch branch, User approvedBy) {
-        if (dto == null) {
-            return null;
-        }
-
-        Stock stock = new Stock();
-        stock.setId(dto.getId());
-        stock.setProduct(product);
-//        stock.setSupplier(supplier);
-        stock.setQuantityAdded(dto.getQuantityAdded());
-        stock.setUnitCost(dto.getUnitCost());
-        stock.setExpiryDate(dto.getExpiryDate());
-        stock.setBatchNumber(dto.getBatchNumber());
-        stock.setBranch(branch);
-        stock.setApprovedBy(approvedBy);
-
-        return stock;
     }
 
     public static void updateStockFromDTO(StockDTO dto, Stock entity) {
@@ -843,8 +825,10 @@ public class EntityDtoMapper {
 
         if (employee.getUser() != null) {
             dto.setUserId(employee.getUser().getId());
-            dto.setUserName(employee.getUser().getName());
-            dto.setUserEmail(employee.getUser().getEmail());
+            dto.setName(employee.getUser().getName());
+            dto.setEmail(employee.getUser().getEmail());
+            dto.setUsername(employee.getUser().getUsername());
+            dto.setPhoneNumber(employee.getUser().getPhoneNumber());
         }
 
         if (employee.getBranch() != null) {

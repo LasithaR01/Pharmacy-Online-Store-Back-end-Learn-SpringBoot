@@ -8,9 +8,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.sentry.Sentry;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pharmacy.pharmacy.dto.StockDTO;
+import pharmacy.pharmacy.dto.stock.StockCreateRequest;
 import pharmacy.pharmacy.exception.GlobalException;
 import pharmacy.pharmacy.service.StockService;
 
@@ -37,12 +39,7 @@ public class StockController {
     })
     @GetMapping
     public ResponseEntity<List<StockDTO>> getAllStockEntries() {
-        try {
-            return ResponseEntity.ok(stockService.getAllStockEntries());
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            throw new GlobalException("Error retrieving stock entries", e);
-        }
+        return ResponseEntity.ok(stockService.getAllStockEntries());
     }
 
     @Operation(summary = "Get stock entry by ID", description = "Retrieve a specific stock entry by its ID")
@@ -116,13 +113,8 @@ public class StockController {
     })
     @PostMapping
     public ResponseEntity<StockDTO> createStock(
-            @Parameter(description = "Stock object to be created") @RequestBody StockDTO stockDTO) {
-        try {
-            return ResponseEntity.ok(stockService.createStock(stockDTO));
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            throw new GlobalException("Error creating stock entry", e);
-        }
+            @Parameter(description = "Stock object to be created") @Valid @RequestBody StockCreateRequest createRequest) {
+        return ResponseEntity.ok(stockService.createStock(createRequest));
     }
 
     @Operation(summary = "Update stock entry", description = "Update an existing stock entry")

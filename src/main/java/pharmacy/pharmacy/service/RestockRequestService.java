@@ -5,13 +5,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pharmacy.pharmacy.dao.RestockRequestRepository;
 import pharmacy.pharmacy.dto.RestockRequestDTO;
+import pharmacy.pharmacy.dto.restockRequest.RestockRequestCreateRequest;
 import pharmacy.pharmacy.entity.*;
 import pharmacy.pharmacy.enums.RestockStatus;
 import pharmacy.pharmacy.exception.GlobalException;
 import pharmacy.pharmacy.exception.ResourceNotFoundException;
 import pharmacy.pharmacy.mapper.EntityDtoMapper;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,17 +24,21 @@ public class RestockRequestService {
     private final BranchService branchService;
     private final UserService userService;
     private final SupplierService supplierService;
+    private final CurrentUserService currentUserService;
 
     public RestockRequestService(RestockRequestRepository restockRequestRepository,
-                               ProductService productService,
-                               BranchService branchService,
-                               UserService userService,
-                               SupplierService supplierService) {
+                                 ProductService productService,
+                                 BranchService branchService,
+                                 UserService userService,
+                                 SupplierService supplierService,
+                                 CurrentUserService currentUserService
+    ) {
         this.restockRequestRepository = restockRequestRepository;
         this.productService = productService;
         this.branchService = branchService;
         this.userService = userService;
         this.supplierService = supplierService;
+        this.currentUserService = currentUserService;
     }
 
     @Transactional(readOnly = true)
@@ -71,20 +75,18 @@ public class RestockRequestService {
         }
     }
 
-    public RestockRequestDTO createRestockRequest(RestockRequestDTO requestDTO) {
+    public RestockRequestDTO createRestockRequest(RestockRequestCreateRequest requestDTO) {
         try {
-            validateRestockRequestDTO(requestDTO);
-
             Product product = productService.getProductEntityById(requestDTO.getProductId());
             Branch branch = branchService.getBranchEntityById(requestDTO.getBranchId());
-            User requestedBy = userService.getUserEntityById(requestDTO.getRequestedById());
             Supplier supplier = requestDTO.getSupplierId() != null ?
-                supplierService.getSupplierEntityById(requestDTO.getSupplierId()) : null;
+                    supplierService.getSupplierEntityById(requestDTO.getSupplierId()) : null;
+            User currentUser = currentUserService.getCurrentUser();
 
             RestockRequest request = RestockRequest.builder()
                     .product(product)
                     .branch(branch)
-                    .requestedBy(requestedBy)
+                    .requestedBy(currentUser)
                     .quantity(requestDTO.getQuantity())
                     .status(RestockStatus.PENDING)
                     .supplier(supplier)
@@ -99,10 +101,10 @@ public class RestockRequestService {
         }
     }
 
-    public RestockRequestDTO approveRequest(int id, int approvedById) {
+    public RestockRequestDTO approveRequest(int id) {
         try {
             RestockRequest request = getRestockRequestEntityById(id);
-            User approvedBy = userService.getUserEntityById(approvedById);
+            User approvedBy = currentUserService.getCurrentUser();
 
             request.approve(approvedBy);
             RestockRequest updatedRequest = restockRequestRepository.save(request);

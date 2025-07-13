@@ -5,12 +5,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pharmacy.pharmacy.dao.StockRepository;
 import pharmacy.pharmacy.dto.StockDTO;
+import pharmacy.pharmacy.dto.stock.StockCreateRequest;
 import pharmacy.pharmacy.entity.*;
 import pharmacy.pharmacy.exception.GlobalException;
 import pharmacy.pharmacy.exception.ResourceNotFoundException;
 import pharmacy.pharmacy.mapper.EntityDtoMapper;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,10 +24,10 @@ public class StockService {
     private final UserService userService;
 
     public StockService(StockRepository stockRepository,
-                      ProductService productService,
-                      SupplierService supplierService,
-                      BranchService branchService,
-                      UserService userService) {
+                        ProductService productService,
+                        SupplierService supplierService,
+                        BranchService branchService,
+                        UserService userService) {
         this.stockRepository = stockRepository;
         this.productService = productService;
         this.supplierService = supplierService;
@@ -37,14 +37,9 @@ public class StockService {
 
     @Transactional(readOnly = true)
     public List<StockDTO> getAllStockEntries() {
-        try {
-            return stockRepository.findAll().stream()
-                    .map(EntityDtoMapper::convertToStockDTO)
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            throw new GlobalException("Failed to retrieve all stock entries", e);
-        }
+        return stockRepository.findAll().stream()
+                .map(EntityDtoMapper::convertToStockDTO)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -84,38 +79,34 @@ public class StockService {
     }
 
     @Transactional
-    public StockDTO createStock(StockDTO stockDTO) {
+    public StockDTO createStock(StockCreateRequest createRequest) {
         try {
-            // Validate required fields
-            if (stockDTO.getProductId() == null) {
-                throw new GlobalException("Product ID is required");
-            }
-            if (stockDTO.getSupplierId() == null) {
-                throw new GlobalException("Supplier ID is required");
-            }
-            if (stockDTO.getQuantityAdded() == null) {
-                throw new GlobalException("Quantity is required");
-            }
-            if (stockDTO.getUnitCost() == null) {
-                throw new GlobalException("Unit cost is required");
-            }
-
-            Product product = productService.getProductEntityById(stockDTO.getProductId());
-            Supplier supplier = supplierService.getSupplierEntityById(stockDTO.getSupplierId());
+            Product product = productService.getProductEntityById(createRequest.getProductId());
+            Supplier supplier = supplierService.getSupplierEntityById(createRequest.getSupplierId());
 
             Branch branch = null;
-            if (stockDTO.getBranchId() != null) {
-                branch = branchService.getBranchEntityById(stockDTO.getBranchId());
+            if (createRequest.getBranchId() != null) {
+                branch = branchService.getBranchEntityById(createRequest.getBranchId());
             }
 
             User approvedBy = null;
-            if (stockDTO.getApprovedById() != null) {
-                approvedBy = userService.getUserEntityById(stockDTO.getApprovedById());
+            if (createRequest.getApprovedById() != null) {
+                approvedBy = userService.getUserEntityById(createRequest.getApprovedById());
             }
 
-            Stock stock = EntityDtoMapper.convertToStock(stockDTO, product, supplier, branch, approvedBy);
-            Stock savedStock = stockRepository.save(stock);
-            return EntityDtoMapper.convertToStockDTO(savedStock);
+            Stock stock = Stock.builder()
+                    .product(product)
+                    .supplier(supplier)
+                    .quantityAdded(createRequest.getQuantityAdded())
+                    .unitCost(createRequest.getUnitCost())
+                    .expiryDate(createRequest.getExpiryDate())
+                    .batchNumber(createRequest.getBatchNumber())
+                    .branch(branch)
+                    .approvedBy(approvedBy)
+                    .build();
+
+            stock = stockRepository.save(stock);
+            return EntityDtoMapper.convertToStockDTO(stock);
         } catch (Exception e) {
             Sentry.captureException(e);
             throw new GlobalException("Failed to create stock entry", e);
