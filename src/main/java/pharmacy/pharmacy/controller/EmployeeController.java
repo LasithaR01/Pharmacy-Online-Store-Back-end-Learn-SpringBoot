@@ -8,9 +8,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.sentry.Sentry;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pharmacy.pharmacy.dto.EmployeeDTO;
+import pharmacy.pharmacy.dto.employee.EmployeeCreateRequest;
 import pharmacy.pharmacy.exception.GlobalException;
 import pharmacy.pharmacy.service.EmployeeService;
 
@@ -124,13 +126,8 @@ public class EmployeeController {
     })
     @PostMapping
     public ResponseEntity<EmployeeDTO> createEmployee(
-            @Parameter(description = "Employee object to be created") @RequestBody EmployeeDTO employeeDTO) {
-        try {
-            return ResponseEntity.ok(employeeService.createEmployee(employeeDTO));
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            throw new GlobalException("Error creating employee", e);
-        }
+            @Parameter(description = "Employee object to be created") @RequestBody @Valid EmployeeCreateRequest request) {
+        return ResponseEntity.ok(employeeService.createEmployee(request));
     }
 
     @Operation(summary = "Update employee", description = "Update an existing employee's information")

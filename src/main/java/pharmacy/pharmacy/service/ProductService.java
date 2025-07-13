@@ -154,6 +154,7 @@ public class ProductService {
     }
 
     public Product getProductEntityById(Integer productId) {
-        return null;
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found."));
     }
 }

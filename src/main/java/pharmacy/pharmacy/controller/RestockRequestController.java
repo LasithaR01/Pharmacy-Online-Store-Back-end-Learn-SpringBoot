@@ -1,5 +1,6 @@
 package pharmacy.pharmacy.controller;
 
+import io.sentry.Sentry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -7,10 +8,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.sentry.Sentry;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pharmacy.pharmacy.dto.RestockRequestDTO;
+import pharmacy.pharmacy.dto.restockRequest.RestockRequestCreateRequest;
 import pharmacy.pharmacy.enums.RestockStatus;
 import pharmacy.pharmacy.exception.GlobalException;
 import pharmacy.pharmacy.service.RestockRequestService;
@@ -79,13 +81,8 @@ public class RestockRequestController {
     })
     @PostMapping
     public ResponseEntity<RestockRequestDTO> createRestockRequest(
-            @Parameter(description = "Restock request data to be created") @RequestBody RestockRequestDTO requestDTO) {
-        try {
-            return ResponseEntity.ok(restockRequestService.createRestockRequest(requestDTO));
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            throw new GlobalException("Failed to create restock request", e);
-        }
+            @Parameter(description = "Restock request data to be created") @Valid @RequestBody RestockRequestCreateRequest requestDTO) {
+        return ResponseEntity.ok(restockRequestService.createRestockRequest(requestDTO));
     }
 
     @Operation(summary = "Approve restock request", description = "Approve a pending restock request")
@@ -102,14 +99,10 @@ public class RestockRequestController {
     })
     @PostMapping("/{id}/approve")
     public ResponseEntity<RestockRequestDTO> approveRequest(
-            @Parameter(description = "ID of the restock request to approve") @PathVariable int id,
-            @Parameter(description = "ID of the user approving the request") @RequestParam int approvedById) {
-        try {
-            return ResponseEntity.ok(restockRequestService.approveRequest(id, approvedById));
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            throw new GlobalException("Failed to approve restock request with id: " + id, e);
-        }
+            @Parameter(description = "ID of the restock request to approve") @PathVariable int id
+//            @Parameter(description = "ID of the user approving the request") @RequestParam int approvedById
+    ) {
+        return ResponseEntity.ok(restockRequestService.approveRequest(id));
     }
 
     @Operation(summary = "Approve multiple restock requests", description = "Approve multiple pending restock requests")

@@ -17,8 +17,10 @@ public class EmployeeDTO {
     private Date createdAt;
 
     // Additional display fields
-    private String userName;
-    private String userEmail;
+    private String name;
+    private String email;
+    private String username;
+    private String phoneNumber;
     private String branchName;
     private String branchLocation;
 }

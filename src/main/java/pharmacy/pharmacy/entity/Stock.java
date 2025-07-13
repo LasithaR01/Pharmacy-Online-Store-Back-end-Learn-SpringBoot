@@ -1,8 +1,7 @@
 package pharmacy.pharmacy.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -10,8 +9,10 @@ import java.util.Date;
 
 @Entity
 @Table(name = "stock")
-@Getter
-@Setter
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Stock {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,16 +50,6 @@ public class Stock {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "approved_by")
     private User approvedBy;
-
-    // Constructors
-    public Stock() {}
-
-    public Stock(Product product, Supplier supplier, Integer quantityAdded, Double unitCost) {
-        this.product = product;
-        this.supplier = supplier;
-        this.quantityAdded = quantityAdded;
-        this.unitCost = unitCost;
-    }
 
     // Business methods
     public Double getTotalCost() {

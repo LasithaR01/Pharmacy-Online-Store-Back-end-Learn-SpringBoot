@@ -9,8 +9,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "restock_request")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
