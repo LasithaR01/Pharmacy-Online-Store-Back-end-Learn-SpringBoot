@@ -43,12 +43,4 @@ public class Employee {
     @Column(name = "created_at", updatable = false)
     private Date createdAt;
 
-    // Business logic methods
-    public boolean isPharmacist() {
-        return position != null && position.equalsIgnoreCase("Pharmacist");
-    }
-
-    public boolean isCashier() {
-        return position != null && position.equalsIgnoreCase("Cashier");
-    }
 }
