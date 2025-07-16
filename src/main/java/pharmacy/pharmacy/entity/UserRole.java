@@ -19,7 +19,4 @@ public class UserRole {
     @Column(length = 20)
     private ERole name;
 
-    public UserRole(ERole name) {
-        this.name = name;
-    }
 }

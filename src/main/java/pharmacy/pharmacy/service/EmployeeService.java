@@ -1,22 +1,23 @@
 package pharmacy.pharmacy.service;
 
 import io.sentry.Sentry;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pharmacy.pharmacy.dao.BranchRepository;
 import pharmacy.pharmacy.dao.EmployeeRepository;
 import pharmacy.pharmacy.dao.UserRepository;
+import pharmacy.pharmacy.dao.UserRoleRepository;
 import pharmacy.pharmacy.dto.EmployeeDTO;
 import pharmacy.pharmacy.dto.employee.EmployeeCreateRequest;
-import pharmacy.pharmacy.entity.Branch;
-import pharmacy.pharmacy.entity.Employee;
-import pharmacy.pharmacy.entity.User;
+import pharmacy.pharmacy.entity.*;
 import pharmacy.pharmacy.exception.GlobalException;
 import pharmacy.pharmacy.exception.ResourceNotFoundException;
 import pharmacy.pharmacy.mapper.EntityDtoMapper;
 
-import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,16 +28,22 @@ public class EmployeeService {
     private final UserRepository userRepository;
     private final BranchRepository branchRepository;
     private final BranchService branchService;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRoleRepository userRoleRepository;
 
     public EmployeeService(EmployeeRepository employeeRepository,
                            UserRepository userRepository,
                            BranchRepository branchRepository,
-                           BranchService branchService
+                           PasswordEncoder passwordEncoder,
+                           BranchService branchService,
+                           UserRoleRepository userRoleRepository
     ) {
         this.employeeRepository = employeeRepository;
         this.userRepository = userRepository;
         this.branchRepository = branchRepository;
         this.branchService = branchService;
+        this.passwordEncoder = passwordEncoder;
+        this.userRoleRepository = userRoleRepository;
     }
 
     @Transactional(readOnly = true)
@@ -92,64 +99,66 @@ public class EmployeeService {
 
     @Transactional
     public EmployeeDTO createEmployee(EmployeeCreateRequest request) {
+
+        Branch branch = request.getBranchId() != null ? branchService.getBranchEntityById(request.getBranchId()) : null;
+        Set<UserRole> userRoles = new HashSet<>();
+
+        ERole role;
         try {
-
-            Branch branch = request.getBranchId() != null ? branchService.getBranchEntityById(request.getBranchId()) : null;
-
-            // create User
-            User user = User.builder()
-                    .username(request.getUsername())
-                    .email(request.getEmail())
-                    .password(request.getPassword())
-                    .phoneNumber(request.getPhoneNumber())
-                    .name(request.getName())
-                    .build();
-            user = userRepository.save(user);
-
-            // create Employee
-            Employee employee = Employee.builder()
-                    .user(user)
-                    .branch(branch)
-                    .position(request.getPosition())
-                    .salary(request.getSalary())
-                    .hireDate(request.getHireDate())
-                    .build();
-            employee = employeeRepository.save(employee);
-
-            return EntityDtoMapper.convertToEmployeeDTO(employee);
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            throw new GlobalException("Failed to create employee", e);
+            role = ERole.valueOf(request.getPosition().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new ResourceNotFoundException("Invalid role: " + request.getPosition());
         }
+
+        UserRole userRole = userRoleRepository.findByName(role)
+                .orElseThrow(() -> new ResourceNotFoundException("User Role not found for: " + role));
+
+        userRoles.add(userRole);
+
+        // create User
+        User user = User.builder()
+                .username(request.getUsername())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .phoneNumber(request.getPhoneNumber())
+                .name(request.getName())
+                .build();
+        user.setRoles(userRoles);
+        user = userRepository.save(user);
+
+        // create Employee
+        Employee employee = Employee.builder()
+                .user(user)
+                .branch(branch)
+                .position(request.getPosition())
+                .salary(request.getSalary())
+                .hireDate(request.getHireDate())
+                .build();
+        employee = employeeRepository.save(employee);
+
+        return EntityDtoMapper.convertToEmployeeDTO(employee);
     }
 
+    @Transactional
     public EmployeeDTO updateEmployee(int id, EmployeeDTO employeeDTO) {
-        try {
-            Employee existingEmployee = employeeRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
 
-            // Update fields if provided
-            if (employeeDTO.getPosition() != null && !employeeDTO.getPosition().trim().isEmpty()) {
-                existingEmployee.setPosition(employeeDTO.getPosition().trim());
-            }
-            if (employeeDTO.getSalary() != null && employeeDTO.getSalary().compareTo(BigDecimal.ZERO) > 0) {
-                existingEmployee.setSalary(employeeDTO.getSalary());
-            }
-            if (employeeDTO.getHireDate() != null) {
-                existingEmployee.setHireDate(employeeDTO.getHireDate());
-            }
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
 
-            // Branch and User cannot be changed in an existing employee record
-            if (employeeDTO.getBranchId() != null || employeeDTO.getUserId() != null) {
-                throw new GlobalException("Cannot change branch or user association for an existing employee");
-            }
+        User user = employee.getUser();
 
-            Employee updatedEmployee = employeeRepository.save(existingEmployee);
-            return EntityDtoMapper.convertToEmployeeDTO(updatedEmployee);
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            throw new GlobalException("Failed to update employee with id: " + id, e);
-        }
+        employee.setBranch(branchService.getBranchEntityById(employeeDTO.getBranchId()));
+        employee.setPosition(employeeDTO.getPosition());
+        employee.setSalary(employeeDTO.getSalary());
+
+        user.setUsername(employeeDTO.getUsername());
+        user.setEmail(employeeDTO.getEmail());
+        user.setName(employeeDTO.getName());
+        user.setPhoneNumber(employeeDTO.getPhoneNumber());
+
+        userRepository.save(user);
+        employeeRepository.save(employee);
+        return EntityDtoMapper.convertToEmployeeDTO(employee);
     }
 
     public void deleteEmployee(int id) {

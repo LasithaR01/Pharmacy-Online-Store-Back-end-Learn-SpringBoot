@@ -8,7 +8,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +23,8 @@ import pharmacy.pharmacy.entity.Product;
 import pharmacy.pharmacy.exception.GlobalException;
 import pharmacy.pharmacy.service.ProductService;
 
+import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -189,13 +195,51 @@ public class ProductController {
                     content = @Content)
     })
     @GetMapping("/low-stock")
-    public ResponseEntity<List<Product>> getLowStockProducts() {
+    public ResponseEntity<List<ProductResponse>> getLowStockProducts() {
         try {
             return ResponseEntity.ok(productService.getLowStockProducts());
         } catch (Exception e) {
             Sentry.captureException(e);
             throw new GlobalException("Error retrieving low stock products", e);
         }
+    }
+
+    @GetMapping("/export/low-stock")
+    public void exportLowStockProductsToExcel(HttpServletResponse response) throws IOException {
+
+        List<ProductResponse> lowStockProducts = productService.getLowStockProducts();
+
+        // Create Excel workbook
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("Invoices");
+
+        // Header row
+        HSSFRow headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("ID");
+        headerRow.createCell(1).setCellValue("Product Name");
+        headerRow.createCell(2).setCellValue("Category Name");
+        headerRow.createCell(3).setCellValue("Barcode");
+        headerRow.createCell(4).setCellValue("Stocks");
+        // Add more fields based on your DTO
+
+        // Data rows
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        int rowNum = 1;
+        for (ProductResponse productResponse : lowStockProducts) {
+            HSSFRow row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(productResponse.getId());
+            row.createCell(1).setCellValue(productResponse.getName()); // Replace with your actual fields
+            row.createCell(2).setCellValue(productResponse.getCategoryName());
+            row.createCell(3).setCellValue(productResponse.getBarcode());
+            row.createCell(4).setCellValue(productResponse.getStockQuantity());
+        }
+
+        // Set response headers
+        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-Disposition", "attachment; filename=low-stock-products.xls");
+
+        workbook.write(response.getOutputStream());
+        workbook.close();
     }
 
     @Operation(summary = "Get expiring products", description = "Retrieve products that are expiring soon")
@@ -207,12 +251,52 @@ public class ProductController {
                     content = @Content)
     })
     @GetMapping("/expiring")
-    public ResponseEntity<List<Product>> getExpiringProducts() {
+    public ResponseEntity<List<ProductResponse>> getExpiringProducts() {
         try {
             return ResponseEntity.ok(productService.getExpiringProducts());
         } catch (Exception e) {
             Sentry.captureException(e);
             throw new GlobalException("Error retrieving expiring products", e);
         }
+    }
+
+    @GetMapping("/export/expiring")
+    public void exportExpiringSoonProductsToExcel(HttpServletResponse response) throws IOException {
+
+        List<ProductResponse> expiringProducts = productService.getExpiringProducts();
+
+        // Create Excel workbook
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("Invoices");
+
+        // Header row
+        HSSFRow headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("ID");
+        headerRow.createCell(1).setCellValue("Product Name");
+        headerRow.createCell(2).setCellValue("Expiry Date");
+        headerRow.createCell(3).setCellValue("Category Name");
+        headerRow.createCell(4).setCellValue("Barcode");
+        headerRow.createCell(5).setCellValue("Stocks");
+        // Add more fields based on your DTO
+
+        // Data rows
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        int rowNum = 1;
+        for (ProductResponse productResponse : expiringProducts) {
+            HSSFRow row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(productResponse.getId());
+            row.createCell(1).setCellValue(productResponse.getName()); // Replace with your actual fields
+            row.createCell(2).setCellValue(productResponse.getExpiryDate());
+            row.createCell(3).setCellValue(productResponse.getCategoryName());
+            row.createCell(4).setCellValue(productResponse.getBarcode());
+            row.createCell(5).setCellValue(productResponse.getStockQuantity());
+        }
+
+        // Set response headers
+        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-Disposition", "attachment; filename=expiring-soon-products.xls");
+
+        workbook.write(response.getOutputStream());
+        workbook.close();
     }
 }

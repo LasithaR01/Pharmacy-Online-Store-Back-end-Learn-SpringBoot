@@ -3,6 +3,7 @@ package pharmacy.pharmacy.service;
 import io.sentry.Sentry;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pharmacy.pharmacy.dao.ProductRepository;
 import pharmacy.pharmacy.dao.StockRepository;
 import pharmacy.pharmacy.dto.StockDTO;
 import pharmacy.pharmacy.dto.stock.StockCreateRequest;
@@ -22,17 +23,20 @@ public class StockService {
     private final SupplierService supplierService;
     private final BranchService branchService;
     private final UserService userService;
+    private final ProductRepository productRepository;
 
     public StockService(StockRepository stockRepository,
                         ProductService productService,
                         SupplierService supplierService,
                         BranchService branchService,
+                        ProductRepository productRepository,
                         UserService userService) {
         this.stockRepository = stockRepository;
         this.productService = productService;
         this.supplierService = supplierService;
         this.branchService = branchService;
         this.userService = userService;
+        this.productRepository = productRepository;
     }
 
     @Transactional(readOnly = true)
@@ -105,6 +109,10 @@ public class StockService {
                     .approvedBy(approvedBy)
                     .build();
 
+            // Increment Product stockQuantity
+            product.setStockQuantity(product.getStockQuantity() + createRequest.getQuantityAdded());
+
+            productRepository.save(product);
             stock = stockRepository.save(stock);
             return EntityDtoMapper.convertToStockDTO(stock);
         } catch (Exception e) {

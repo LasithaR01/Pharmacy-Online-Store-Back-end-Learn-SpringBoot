@@ -232,7 +232,7 @@ public class EntityDtoMapper {
             dto.setUserId(customer.getUser().getId());
             dto.setUserName(customer.getUser().getName());
             dto.setUserEmail(customer.getUser().getEmail());
-            dto.setUserContactNumber(customer.getUser().getContactNumber());
+//            dto.setUserContactNumber(customer.getUser().getContactNumber());
         }
 
         dto.setAddress(customer.getAddress());

@@ -137,15 +137,38 @@ public class ProductService {
         return productRepository.findByIsPrescriptionRequired(true);
     }
 
-    @Transactional(readOnly = true)
-    public List<Product> getLowStockProducts() {
-        return productRepository.findProductsBelowReorderLevel();
+    public List<ProductResponse> getLowStockProducts() {
+        return productRepository.findProductsBelowReorderLevel().stream()
+                .map(product -> {
+                    ProductResponse dto = new ProductResponse();
+                    dto.setId(product.getId());
+                    dto.setName(product.getName());
+                    dto.setPrice(product.getPrice());
+                    dto.setCategoryName(product.getCategory() != null ? product.getCategory().getName() : null);
+                    dto.setBarcode(product.getBarcode());
+                    dto.setStockQuantity(product.getStockQuantity());
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<Product> getExpiringProducts() {
+    public List<ProductResponse> getExpiringProducts() {
         LocalDate thresholdDate = LocalDate.now().plusMonths(1);
-        return productRepository.findProductsExpiringSoon(thresholdDate);
+//        return productRepository.findProductsExpiringSoon(thresholdDate);
+        return productRepository.findProductsExpiringSoon(thresholdDate).stream()
+                .map(product -> {
+                    ProductResponse dto = new ProductResponse();
+                    dto.setId(product.getId());
+                    dto.setName(product.getName());
+                    dto.setPrice(product.getPrice());
+                    dto.setCategoryName(product.getCategory() != null ? product.getCategory().getName() : null);
+                    dto.setBarcode(product.getBarcode());
+                    dto.setStockQuantity(product.getStockQuantity());
+                    dto.setExpiryDate(product.getExpiryDate());
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)

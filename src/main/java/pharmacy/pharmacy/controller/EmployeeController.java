@@ -146,12 +146,7 @@ public class EmployeeController {
     public ResponseEntity<EmployeeDTO> updateEmployee(
             @Parameter(description = "ID of the employee to be updated") @PathVariable int id,
             @Parameter(description = "Updated employee object") @RequestBody EmployeeDTO employeeDTO) {
-        try {
-            return ResponseEntity.ok(employeeService.updateEmployee(id, employeeDTO));
-        } catch (Exception e) {
-            Sentry.captureException(e);
-            throw new GlobalException("Error updating employee with id: " + id, e);
-        }
+        return ResponseEntity.ok(employeeService.updateEmployee(id, employeeDTO));
     }
 
     @Operation(summary = "Delete employee", description = "Remove an employee from the system")

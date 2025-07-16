@@ -18,13 +18,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import pharmacy.pharmacy.dao.UserRoleRepository;
 import pharmacy.pharmacy.dao.UserRepository;
-import pharmacy.pharmacy.dto.AuthRegisterResponseDTO;
-import pharmacy.pharmacy.dto.AuthResponseDTO;
-import pharmacy.pharmacy.dto.LoginDTO;
-import pharmacy.pharmacy.dto.RegisterDTO;
+import pharmacy.pharmacy.dto.*;
 import pharmacy.pharmacy.entity.ERole;
 import pharmacy.pharmacy.entity.UserRole;
 import pharmacy.pharmacy.entity.User;
+import pharmacy.pharmacy.exception.ResourceNotFoundException;
 import pharmacy.pharmacy.security.JwtUtils;
 
 import java.util.HashSet;
@@ -123,5 +121,25 @@ public class AuthController {
         userRepository.save(user);
 
         return ResponseEntity.ok(new AuthRegisterResponseDTO(user));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).body("Missing or invalid Authorization header");
+        }
+
+        String token = authHeader.substring(7); // remove "Bearer "
+        String username = jwtUtils.getUserNameFromJwtToken(token);
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        if (user == null) {
+            return ResponseEntity.status(404).body("User not found");
+        }
+
+        // Map User to MeDTO
+        MeDTO meDTO = new MeDTO(user);
+        return ResponseEntity.ok(meDTO); // You might want to return a DTO instead of the full User entity
     }
 }

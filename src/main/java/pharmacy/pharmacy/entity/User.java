@@ -38,14 +38,6 @@ public class User {
     }
 
     public String getFullName() {
-        return "";
-    }
-
-    public String getName() {
-        return "";
-    }
-
-    public String getContactNumber() {
-        return "";
+        return this.name;
     }
 }
