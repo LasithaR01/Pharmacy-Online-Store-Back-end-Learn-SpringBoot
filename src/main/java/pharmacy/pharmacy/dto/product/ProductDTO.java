@@ -9,6 +9,7 @@ public class ProductDTO {
     private String name;
     private Integer categoryId;
     private String description;
+    private String imageUrl;  // Added image URL field
     private BigDecimal price;
     private BigDecimal costPrice;
     private Integer stockQuantity;

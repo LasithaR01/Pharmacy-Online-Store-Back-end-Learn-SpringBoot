@@ -3,6 +3,8 @@ package pharmacy.pharmacy.dto.product;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import org.hibernate.validator.constraints.URL;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -11,22 +13,36 @@ public class ProductCreateRequest {
     @NotBlank(message = "Product name is required")
     private String name;
 
-//    @NotBlank(message = "Product description is required")
     private String description;
+
+    @URL(message = "Image URL must be valid")
+    @Pattern(regexp = ".*\\.(jpg|jpeg|png|gif|webp)$", message = "Image must be JPG, JPEG, PNG, GIF, or WEBP")
+    private String imageUrl;
 
     @NotNull(message = "Price is required")
     @DecimalMin(value = "0.01", message = "Price must be greater than 0")
     private BigDecimal price;
 
+    @DecimalMin(value = "0.00", message = "Cost price cannot be negative")
     private BigDecimal costPrice;
+
+    @NotNull(message = "Stock quantity is required")
     private Integer stockQuantity;
+
     private Integer reorderLevel;
     private LocalDate expiryDate;
     private String batchNumber;
+
+    @NotBlank(message = "Barcode is required")
     private String barcode;
-    private Boolean isPrescriptionRequired;
+
+    @NotNull(message = "Prescription requirement must be specified")
+    private Boolean isPrescriptionRequired = false;
+
+    @NotNull(message = "Category ID is required")
     private Integer categoryId;
 
+    // Getters and Setters
     public String getName() {
         return name;
     }
@@ -41,6 +57,14 @@ public class ProductCreateRequest {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public BigDecimal getPrice() {
