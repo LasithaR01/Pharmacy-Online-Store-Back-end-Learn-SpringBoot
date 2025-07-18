@@ -11,11 +11,13 @@ import pharmacy.pharmacy.entity.Category;
 public class CategoryResponse {
     private Integer id;
     private String name;
+    private String imageUrl;
     private String description;
 
     public CategoryResponse(Category category) {
         this.id = category.getId();
         this.name = category.getName();
+        this.imageUrl = category.getImageUrl();
         this.description = category.getDescription();
     }
 }

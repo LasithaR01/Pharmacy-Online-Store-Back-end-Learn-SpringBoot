@@ -25,6 +25,9 @@ public class Category {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "image_url", length = 2048)  // Increased length for URLs
+    private String imageUrl;
+
     // Self-referential relationship for parent/child categories
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
@@ -50,5 +53,10 @@ public class Category {
     public void addProduct(Product product) {
         products.add(product);
         product.setCategory(this);
+    }
+
+    // Image handling convenience method
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl != null && !imageUrl.isBlank() ? imageUrl : null;
     }
 }
