@@ -10,6 +10,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.sentry.Sentry;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import pharmacy.pharmacy.dto.CategoryDTO;
+import pharmacy.pharmacy.dto.category.CategoryCreateDTO;
 import pharmacy.pharmacy.dto.category.CategoryResponse;
 import pharmacy.pharmacy.entity.Category;
 import pharmacy.pharmacy.exception.GlobalException;
@@ -73,10 +76,22 @@ public class CategoryController {
                     content = @Content)
     })
     @PostMapping
-    public ResponseEntity<Category> createCategory(
-            @Parameter(description = "Category object to be created") @RequestBody Category category) {
+    public ResponseEntity<Void> createCategory(
+            @Parameter(description = "Category object to be created")
+            @RequestParam("name") String name,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "parentId", required = false) Integer parentId,
+            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile
+    ) {
         try {
-            return ResponseEntity.ok(categoryService.createCategory(category));
+            CategoryCreateDTO createDTO = new CategoryCreateDTO(
+                    name,
+                    description,
+                    imageFile,
+                    parentId
+            );
+            categoryService.createCategory(createDTO);
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
             Sentry.captureException(e);
             throw new GlobalException("Error creating category", e);
