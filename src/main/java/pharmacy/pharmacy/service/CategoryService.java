@@ -2,6 +2,7 @@ package pharmacy.pharmacy.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pharmacy.pharmacy.dto.category.CategoryCreateDTO;
 import pharmacy.pharmacy.dto.category.CategoryResponse;
 import pharmacy.pharmacy.dto.product.ProductPageResponse;
 import pharmacy.pharmacy.entity.Category;
@@ -16,8 +17,11 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    public CategoryService(CategoryRepository categoryRepository) {
+    private final FileStorageService fileStorageService;
+
+    public CategoryService(CategoryRepository categoryRepository, FileStorageService fileStorageService) {
         this.categoryRepository = categoryRepository;
+        this.fileStorageService = fileStorageService;
     }
 
     @Transactional(readOnly = true)
@@ -28,6 +32,7 @@ public class CategoryService {
                     dto.setId(category.getId());
                     dto.setName(category.getName());
                     dto.setDescription(category.getDescription());
+                    dto.setImageUrl(category.getImageUrl());
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -40,11 +45,19 @@ public class CategoryService {
     }
 
     @Transactional
-    public Category createCategory(Category category) {
-        if (category.getParent() != null) {
-            // Ensure parent exists
-            getCategoryById(category.getParent().getId());
+    public Category createCategory(CategoryCreateDTO createDTO) {
+        // Save the file if imageFile != null
+        String imageUrl = null;
+        if (createDTO.getImageFile() != null && !createDTO.getImageFile().isEmpty()) {
+            imageUrl = fileStorageService.storeFile(createDTO.getImageFile()); // Implement this
         }
+
+        Category category = Category.builder()
+                .name(createDTO.getName())
+                .description(createDTO.getDescription())
+                .imageUrl(imageUrl)
+                .build();
+
         return categoryRepository.save(category);
     }
 

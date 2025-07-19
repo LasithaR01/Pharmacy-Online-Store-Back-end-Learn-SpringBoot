@@ -74,6 +74,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
                 "http://localhost:4200",       // Angular development
+                "http://localhost:4201",
                 "https://your-production-url.com" // Production frontend
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
